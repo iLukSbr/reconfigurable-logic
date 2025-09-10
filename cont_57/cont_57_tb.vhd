@@ -8,7 +8,7 @@ end entity;
 architecture tb_arch of cont_57_tb is
     signal rst, clr, ld, en : std_logic := '0';
     signal clk_50m : std_logic := '0';
-    signal disp_tens, disp_un : std_logic_vector(6 downto 0);
+    signal disp_ten, disp_un : std_logic_vector(6 downto 0);
 begin
     -- Clock
     clock_process: process
@@ -62,7 +62,7 @@ begin
             clr       => clr,
             en        => en,
             ld        => ld,
-            disp_tens => disp_tens,
+            disp_ten => disp_ten,
             disp_un   => disp_un
         );
 

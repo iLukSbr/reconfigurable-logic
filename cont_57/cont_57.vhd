@@ -5,17 +5,17 @@ use ieee.std_logic_1164.all;
 entity cont_57 is
     port(
         clk_50m, rst, clr, en, ld : in  std_logic;
-        disp_tens, disp_un         : out std_logic_vector(6 downto 0)
+        disp_ten, disp_un         : out std_logic_vector(6 downto 0)
     );
 end cont_57;
 
 architecture cont_57_arch of cont_57 is
     signal clk_1s, clk_50m_signal: std_logic;
-    signal tens, un: std_logic_vector(3 downto 0);
+    signal ten, un: std_logic_vector(3 downto 0);
     signal carry_units: std_logic;
     signal reset_or_clear: std_logic;
-    signal load_tens, load_units: std_logic;
-    signal data_tens, data_units: std_logic_vector(3 downto 0);
+    signal load_ten, load_units: std_logic;
+    signal data_ten, data_units: std_logic_vector(3 downto 0);
     signal reached_68: std_logic;
 
     -- Clock divider component
@@ -58,14 +58,14 @@ begin
     port map(clk_in => clk_50m_signal, clk_out => clk_1s);
 
     -- Load logic
-    -- Initialize at 12 (tens=1, un=2)
-    data_tens <= "0001"; -- 1
+    -- Initialize at 12 (ten=1, un=2)
+    data_ten <= "0001"; -- 1
     data_units  <= "0010"; -- 2
 
     -- Load signal: when reaches 68 or reset/clear/ld
-    reached_68 <= '1' when (tens = "0110" and un = "1000") else '0';
+    reached_68 <= '1' when (ten = "0110" and un = "1000") else '0';
     load_units  <= reached_68 or reset_or_clear or ld;
-    load_tens   <= reached_68 or reset_or_clear or ld;
+    load_ten   <= reached_68 or reset_or_clear or ld;
 
     -- Units counter (0-9)
     units_counter: cont_up_mod16 port map(
@@ -78,18 +78,18 @@ begin
         co => carry_units
     );
 
-    -- Tens counter (1-6)
-    tens_counter: cont_up_mod16 port map(
+    -- ten counter (1-6)
+    ten_counter: cont_up_mod16 port map(
         clk => carry_units,
         z => '0',
         en => en,
-        load => load_tens,
-        data_in => data_tens,
-        q => tens,
+        load => load_ten,
+        data_in => data_ten,
+        q => ten,
         co => open
     );
 
-    tens_display: bcd_display port map(bcd => tens, seg => disp_tens);
+    ten_display: bcd_display port map(bcd => ten, seg => disp_ten);
     units_display:  bcd_display port map(bcd => un,  seg => disp_un);
 
 end cont_57_arch;
