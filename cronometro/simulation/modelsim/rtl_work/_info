@@ -1,0 +1,137 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\altera\13.0sp1\quartus\bin64\Projetos\Lab3_Logica\simulation\modelsim
+Ebcd_display
+Z1 w1757515863
+Z2 DPx4 ieee 11 numeric_std 0 22 O3PF8EB`?j9=z7KT`fn941
+Z3 DPx3 std 6 textio 0 22 5>J:;AW>W0[[dW0I6EN1Q0
+Z4 DPx4 ieee 14 std_logic_1164 0 22 5=aWaoGZSMWIcH0i^f`XF1
+Z5 dC:\altera\13.0sp1\quartus\bin64\Projetos\Lab3_Logica\simulation\modelsim
+Z6 8C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/bcd_display.vhd
+Z7 FC:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/bcd_display.vhd
+l0
+L5
+V_=Kb]HLM?Sj_j^j>JQ6QN2
+Z8 OV;C;10.1d;51
+31
+Z9 !s108 1758111979.404000
+Z10 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/bcd_display.vhd|
+Z11 !s107 C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/bcd_display.vhd|
+Z12 o-93 -work work -O0
+Z13 tExplicit 1
+!s100 1eidiKjQ]0ofO2UCMWL3S2
+!i10b 1
+Abcd_display_arch
+R2
+R3
+R4
+DEx4 work 11 bcd_display 0 22 _=Kb]HLM?Sj_j^j>JQ6QN2
+l13
+L12
+V5[SE4f5JO[`@Qnbi_6o2d1
+R8
+31
+R9
+R10
+R11
+R12
+R13
+!s100 YdeQXf0`njWJ;ScLbEd@n3
+!i10b 1
+Econt4_mod10
+Z14 w1757515286
+R2
+R3
+R4
+R5
+Z15 8C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/cont4_mod10.vhd
+Z16 FC:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/cont4_mod10.vhd
+l0
+L5
+V5aUbRJX=:QAzJm;=RGbeZ1
+R8
+31
+Z17 !s108 1758111979.278000
+Z18 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/cont4_mod10.vhd|
+Z19 !s107 C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/cont4_mod10.vhd|
+R12
+R13
+!s100 AEQDb=H[izl4J6L1dVmUM1
+!i10b 1
+Ax
+R2
+R3
+R4
+Z20 DEx4 work 11 cont4_mod10 0 22 5aUbRJX=:QAzJm;=RGbeZ1
+l17
+L15
+VRR_;T>2L2IBEcRM`bengW2
+R8
+31
+R17
+R18
+R19
+R12
+R13
+!s100 i_4ndbcPKUOOGMl;feUOd0
+!i10b 1
+Elab3
+Z21 w1758110381
+R2
+R3
+R4
+R5
+Z22 8C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3.vhd
+Z23 FC:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3.vhd
+l0
+L5
+VI@M_i7UR;dhH[O[E<GOXL3
+R8
+31
+Z24 !s108 1758111979.510000
+Z25 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3.vhd|
+Z26 !s107 C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3.vhd|
+R12
+R13
+!s100 _5WSYFK0D5B[eikAP<mm33
+!i10b 1
+Ax
+R20
+R2
+R3
+R4
+DEx4 work 4 lab3 0 22 I@M_i7UR;dhH[O[E<GOXL3
+l34
+L18
+Vz@lc0nSN1Vf6J@Xgz04Z:3
+R8
+31
+R24
+R25
+R26
+R12
+R13
+!s100 59D01`a34Pz_cOOTYGCEB3
+!i10b 1
+Elab3_tb
+w1758110547
+R2
+R3
+R4
+R5
+8C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3_TB.vhd
+FC:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3_TB.vhd
+l0
+L5
+Vf<Ak7J5:EamciS1T8a[d83
+!s100 AZ?@mFoGMV`VcU1RkMnAC0
+R8
+31
+!i10b 1
+!s108 1758111979.653000
+!s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3_TB.vhd|
+!s107 C:/altera/13.0sp1/quartus/bin64/Projetos/Lab3_Logica/Lab3_TB.vhd|
+R12
+R13
