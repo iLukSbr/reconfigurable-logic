@@ -4,5 +4,12 @@ db/
 incremental_db/
 output_files/
 simulation/
-*.rpt
 *.ini
+_info
+*.qdb
+*.qpg
+*.qtl
+_vmake
+*.bak
+*.wlf
+*.qws
