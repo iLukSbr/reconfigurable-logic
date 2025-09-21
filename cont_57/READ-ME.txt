@@ -1,0 +1,27 @@
+Projeto: Contador Módulo 57 (12 a 68 BCD) - Simulação RTL e Gate Level
+============================================================
+Lucas Yukio Fukuda Matsumoto - Matrícula 2516977
+
+Snapshots: https://drive.google.com/drive/folders/1DgJMGiDOYbdNNpXCS2Qj6FNOgqUBHHM3?usp=sharing
+
+1. Descrição Geral
+------------------
+Este projeto implementa um contador módulo 57, que inicia em 12 (BCD) e termina em 68 (BCD), utilizando contadores de 4 bits módulo 16. O projeto inclui funcionalidades de CLR, RST, EN e LD, além de um testbench para simulação.
+
+2. Como Simular (RTL)
+---------------------
+1. Abra o ModelSim na pasta do projeto.
+2. Execute o script:
+   do cont_57_rtl.do
+3. O script compila todos os arquivos e executa a simulação por 10 segundos.
+
+3. Como Simular (Gate Level)
+----------------------------
+1. Compile o projeto no Quartus. 
+2. Tools -> Run simulation tool -> Gate Level Simulation.
+3. "Slow model" -> Run.
+
+5. Resultados e Observações
+--------------------------
+- O contador inicia em 12 e ao atingir 68 retorna para 12.
+- Diferenças de tempo entre RTL e Gate Level podem ser observadas devido à complexidade do netlist pós-síntese.

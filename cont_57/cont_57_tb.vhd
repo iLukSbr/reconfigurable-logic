@@ -8,7 +8,9 @@ end entity;
 architecture tb_arch of cont_57_tb is
     signal rst, clr, ld, en : std_logic := '0';
     signal clk_50m : std_logic := '0';
-    signal disp_ten, disp_un : std_logic_vector(6 downto 0);
+    signal disp_ten, disp_un : std_logic_vector(6 downto 0) := (others => '1');
+    signal clk_divided_out, carry_units_out, load_ten_out, load_units_out : std_logic;
+    signal tens_out, uns_out : unsigned(3 downto 0);
 begin
     -- Clock
     clock_process: process
@@ -22,35 +24,10 @@ begin
         wait;
     end process;
 
-    -- Reset
-    reset_process: process
-    begin
-        rst <= '1';
-        wait for 15 ns;
-        rst <= '0';
-        wait;
-    end process;
-
     -- Enable
     enable_process: process
     begin
         en <= '1';
-        wait;
-    end process;
-
-    -- Estímulo para clr e ld
-    stimulus_process: process
-    begin
-        clr <= '0';
-        ld  <= '0';
-        wait for 100 ns;
-        clr <= '1';
-        wait for 20 ns;
-        clr <= '0';
-        wait for 100 ns;
-        ld  <= '1';
-        wait for 20 ns;
-        ld  <= '0';
         wait;
     end process;
 
@@ -63,7 +40,13 @@ begin
             en        => en,
             ld        => ld,
             disp_ten => disp_ten,
-            disp_un   => disp_un
+            disp_un   => disp_un,
+            clk_divided_out => clk_divided_out,
+            carry_units_out => carry_units_out,
+            load_ten_out => load_ten_out,
+            load_units_out => load_units_out,
+            tens_out => tens_out,
+            uns_out => uns_out
         );
 
     -- Parar simulação

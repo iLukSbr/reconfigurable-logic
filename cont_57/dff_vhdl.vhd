@@ -10,7 +10,7 @@ end dff_vhdl;
 
 architecture ff_d of dff_vhdl is
 
-    signal qstate: std_logic;
+    signal qstate: std_logic := '0';
 
 begin
     process(clk, clr, prs)

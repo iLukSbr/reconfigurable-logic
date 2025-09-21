@@ -9,39 +9,39 @@ architecture sim of Lab3_TB is
 
     component Lab3 is
         port(
-            RST        : in std_logic;
+            -- RST        : in std_logic;
             CLK        : in std_logic;
-            EN         : in std_logic;
-            CLR        : in std_logic;
+            -- EN         : in std_logic;
+            -- CLR        : in std_logic;
             button_1   : in std_logic;
             button_2   : in std_logic;
-            Q_SEC      : out unsigned(7 downto 0);
-            Q_MILLISEC : out unsigned(7 downto 0);
+            -- Q_SEC      : out unsigned(7 downto 0);
+            -- Q_MILLISEC : out unsigned(7 downto 0);
             disp_tens, disp_units, disp_hundreth_tens, disp_hundreth_units : out std_logic_vector(6 downto 0)
         );
     end component;
 
-    signal RST        : std_logic := '0';
+    -- signal RST        : std_logic := '0';
     signal CLK        : std_logic := '0';
-    signal EN         : std_logic := '0';
-    signal CLR        : std_logic := '0';
+    -- signal EN         : std_logic := '0';
+    -- signal CLR        : std_logic := '0';
     signal button_1   : std_logic := '0';
     signal button_2   : std_logic := '0';
-    signal Q_SEC      : unsigned(7 downto 0) := (others => '0');
-    signal Q_MILLISEC : unsigned(7 downto 0) := (others => '0');
+    -- signal Q_SEC      : unsigned(7 downto 0) := (others => '0');
+    -- signal Q_MILLISEC : unsigned(7 downto 0) := (others => '0');
     signal disp_tens, disp_units, disp_hundreth_tens, disp_hundreth_units : std_logic_vector(6 downto 0) := (others => '0');
 
 begin
     UUT: Lab3
         port map (
-            RST => RST,
+            -- RST => RST,
             CLK => CLK,
-            EN  => EN,
-            CLR => CLR,
+            -- EN  => EN,
+            -- CLR => CLR,
             button_1 => button_1,
             button_2 => button_2,
-            Q_SEC => Q_SEC,
-            Q_MILLISEC => Q_MILLISEC,
+            -- Q_SEC => Q_SEC,
+            -- Q_MILLISEC => Q_MILLISEC,
             disp_tens => disp_tens,
             disp_units => disp_units,
             disp_hundreth_tens => disp_hundreth_tens,
@@ -62,13 +62,13 @@ begin
     -------------------------------------------------------------------------------
     -- RST: nível alto de 0 a 5 ns
     -------------------------------------------------------------------------------
-    rst_gen: process
-    begin
---        RST <= '1';
---        wait for 1 ns;
-        RST <= '0';
-        wait;
-    end process;
+    -- rst_gen: process
+    -- begin
+    --    RST <= '1';
+    --    wait for 1 ns;
+    --     RST <= '0';
+    --     wait;
+    -- end process;
 
     -------------------------------------------------------------------------------
     -- EN: alto de 0 a 200 ms, baixo no restante
@@ -84,14 +84,14 @@ begin
     -------------------------------------------------------------------------------
     -- CLR: alto de 75 a 95 ns
     -------------------------------------------------------------------------------
-    clr_gen: process
-    begin
-        CLR <= '0';
---        wait for 75 ns;
---        CLR <= '1';
---        wait for 20 ns;
---        CLR <= '0';
-        wait;
-    end process;
+    -- clr_gen: process
+    -- begin
+    --     CLR <= '0';
+    --    wait for 75 ns;
+    --    CLR <= '1';
+    --    wait for 20 ns;
+    --    CLR <= '0';
+    --     wait;
+    -- end process;
 
 end architecture;

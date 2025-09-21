@@ -1,10 +1,216 @@
 m255
 K4
 z2
+!s11e vcom 2020.1 2020.02, Feb 28 2020
 13
 !s112 1.1
 !i10d 8192
 !i10e 25
 !i10f 100
 cModel Technology
-dC:/Users/lucas/Desktop/cont_57
+Z0 dC:/Users/lucas/reconfigurable-logic/cont_57
+Ebcd_display
+Z1 w1758422609
+Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+!i122 2
+R0
+Z5 8bcd_display.vhd
+Z6 Fbcd_display.vhd
+l0
+L5 1
+VXD6ViFHbn3E?3iGfY><QG0
+!s100 BNK6z]G8f4K4n4R0??4QK1
+Z7 OV;C;2020.1;71
+32
+Z8 !s110 1758423096
+!i10b 1
+Z9 !s108 1758423095.000000
+Z10 !s90 -reportprogress|300|bcd_display.vhd|
+Z11 !s107 bcd_display.vhd|
+!i113 1
+Z12 tExplicit 1 CvgOpt 0
+Abcd_display_arch
+R2
+R3
+R4
+DEx4 work 11 bcd_display 0 22 XD6ViFHbn3E?3iGfY><QG0
+!i122 2
+l13
+L12 21
+V1aCSHDIk=Q1Q8:C=T[H]G2
+!s100 JdFCSj]O;l0ncRhI1UblB3
+R7
+32
+R8
+!i10b 1
+R9
+R10
+R11
+!i113 1
+R12
+Econt_57
+Z13 w1758422777
+R2
+R3
+R4
+!i122 3
+R0
+Z14 8cont_57.vhd
+Z15 Fcont_57.vhd
+l0
+L7 1
+VaUI2_2>YVCEemnE?n13aE0
+!s100 a5TCzUQjz1I9QAl9Q9DB@3
+R7
+32
+R8
+!i10b 1
+Z16 !s108 1758423096.000000
+Z17 !s90 -reportprogress|300|cont_57.vhd|
+Z18 !s107 cont_57.vhd|
+!i113 1
+R12
+Acont_57_arch
+Z19 DEx4 work 13 cont_up_mod16 0 22 74mi>mUl9hFSV@mc;[ca_0
+R2
+R3
+R4
+Z20 DEx4 work 7 cont_57 0 22 aUI2_2>YVCEemnE?n13aE0
+!i122 3
+l53
+L16 90
+V4NNWnKG;dgb4m?CWX5?4R3
+!s100 oX0dX[QAUKeSSnmYKC5T@2
+R7
+32
+R8
+!i10b 1
+R16
+R17
+R18
+!i113 1
+R12
+Econt_57_tb
+Z21 w1758421745
+R2
+R3
+R4
+!i122 4
+R0
+Z22 8cont_57_tb.vhd
+Z23 Fcont_57_tb.vhd
+l0
+L5 1
+Vh79^AVzP@8BHI0nSKoV:83
+!s100 DDK`6iGDjDFI]V4]QFV@o2
+R7
+32
+R8
+!i10b 1
+R16
+Z24 !s90 -reportprogress|300|cont_57_tb.vhd|
+!s107 cont_57_tb.vhd|
+!i113 1
+R12
+Atb_arch
+R20
+R2
+R3
+R4
+DEx4 work 10 cont_57_tb 0 22 h79^AVzP@8BHI0nSKoV:83
+!i122 4
+l14
+L8 52
+VG=l7mSGzLVjzi2PBe?_;?3
+!s100 0M1Ze3n3AHzX]R7>^:0j83
+R7
+32
+R8
+!i10b 1
+R16
+R24
+Z25 !s107 cont_57_tb.vhd|
+!i113 1
+R12
+Econt_up_mod16
+Z26 w1758422491
+R2
+R3
+R4
+!i122 1
+R0
+Z27 8cont_up_mod16.vhd
+Z28 Fcont_up_mod16.vhd
+l0
+L5 1
+V74mi>mUl9hFSV@mc;[ca_0
+!s100 H<KjLN1i@;;<bK=4a7`W22
+R7
+32
+Z29 !s110 1758423095
+!i10b 1
+R9
+Z30 !s90 -reportprogress|300|cont_up_mod16.vhd|
+Z31 !s107 cont_up_mod16.vhd|
+!i113 1
+R12
+Acont_up_mod16_arch
+R2
+R3
+R4
+R19
+!i122 1
+l16
+L14 22
+V`aGH6gfO;kJ?7d^D]E@m?0
+!s100 T5OmZ1IZJFn[TiaPc81Z`1
+R7
+32
+R29
+!i10b 1
+R9
+R30
+R31
+!i113 1
+R12
+Ediv_clk
+Z32 w1758400241
+R3
+R4
+!i122 0
+R0
+Z33 8div_clk.vhd
+Z34 Fdiv_clk.vhd
+l0
+L4 1
+V]a?iXd`@fGE8`oX=1567Q3
+!s100 0RUgzFFWLMMKb4H9OlHE12
+R7
+32
+R29
+!i10b 1
+R9
+Z35 !s90 -reportprogress|300|div_clk.vhd|
+Z36 !s107 div_clk.vhd|
+!i113 1
+R12
+Adiv_clk_arch
+R3
+R4
+DEx4 work 7 div_clk 0 22 ]a?iXd`@fGE8`oX=1567Q3
+!i122 0
+l18
+L15 18
+VSH`09Lj`@L;Cbj<]CE0;Z0
+!s100 mN4<^^=Rkamhhi[M]WilY1
+R7
+32
+R29
+!i10b 1
+R9
+R35
+R36
+!i113 1
+R12
