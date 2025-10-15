@@ -16,32 +16,52 @@ end entity FlowControlTop;
 
 architecture rtl of FlowControlTop is
 
+    -- Sinais para o atributo de síntese
+    attribute syn_keep : boolean; 
+
     -- Sinais entre a BRAM de origem, o controlador de escrita e a FIFO
     signal wr_bram_addr : std_logic_vector(10 downto 0) := (others => '0'); -- Endereço da BRAM de origem
-    signal wr_bram_wren : std_logic := '0';                                 -- Write enable para a BRAM de origem
-    signal wr_bram_data : std_logic_vector(7 downto 0) := (others => '0');  -- Dado a ser escrito na BRAM de origem
-    signal wr_bram_q    : std_logic_vector(7 downto 0) := (others => '0');  -- Dado lido da BRAM de origem
+    signal wr_bram_wren : std_logic := '0'; -- Write enable para a BRAM de origem
+    signal wr_bram_data : std_logic_vector(7 downto 0) := (others => '0'); -- Dado a ser escrito na BRAM de origem
+    signal wr_bram_q    : std_logic_vector(7 downto 0) := (others => '0'); -- Dado lido da BRAM de origem
 
     -- Sinais entre a BRAM de destino, o controlador de leitura e a FIFO
     signal rd_bram_addr : std_logic_vector(10 downto 0) := (others => '0'); -- Endereço da BRAM de destino
-    signal rd_bram_wren : std_logic := '0';                                 -- Write enable para a BRAM de destino
-    signal rd_bram_data : std_logic_vector(7 downto 0) := (others => '0');  -- Dado a ser escrito na BRAM de destino
-    signal rd_bram_q    : std_logic_vector(7 downto 0) := (others => '0');  -- Dado lido da BRAM de destino
+    signal rd_bram_wren : std_logic := '0'; -- Write enable para a BRAM de destino
+    signal rd_bram_data : std_logic_vector(7 downto 0) := (others => '0'); -- Dado a ser escrito na BRAM de destino
+    signal rd_bram_q    : std_logic_vector(7 downto 0) := (others => '0'); -- Dado lido da BRAM de destino
 
     -- Barramento da FIFO usado para fluxo de dados e monitoramento de ocupação
     signal fifo_data_in      : std_logic_vector(7 downto 0) := (others => '0'); -- Dado a ser escrito na FIFO
     signal fifo_data_out     : std_logic_vector(7 downto 0) := (others => '0'); -- Dado lido da FIFO
-    signal fifo_wrreq        : std_logic := '0';                                -- Write request para a FIFO
-    signal fifo_rdreq        : std_logic := '0';                                -- Read request para a FIFO
-    signal fifo_almost_empty : std_logic := '0';                                -- Sinal de quase vazio
-    signal fifo_almost_full  : std_logic := '0';                                -- Sinal de quase cheio
-    signal fifo_empty        : std_logic := '0';                                -- Sinal de vazio
-    signal fifo_full         : std_logic := '0';                                -- Sinal de cheio
+    
+    signal fifo_wrreq        : std_logic := '0'; -- Write request para a FIFO
+    attribute syn_keep of fifo_wrreq : signal is true;
+    
+    signal fifo_rdreq        : std_logic := '0'; -- Read request para a FIFO
+    attribute syn_keep of fifo_rdreq : signal is true;  
+    
+    signal fifo_almost_empty : std_logic := '0'; -- Sinal de quase vazio
+    attribute syn_keep of fifo_almost_empty : signal is true; 
+    
+    signal fifo_almost_full  : std_logic := '0'; -- Sinal de quase cheio
+    attribute syn_keep of fifo_almost_full : signal is true; 
+    
+    signal fifo_empty        : std_logic := '0'; -- Sinal de vazio
+    attribute syn_keep of fifo_empty : signal is true; 
+    
+    signal fifo_full         : std_logic := '0'; -- Sinal de cheio
+    attribute syn_keep of fifo_full : signal is true; 
+    
     signal fifo_usedw        : std_logic_vector(9 downto 0) := (others => '0'); -- Contador de palavras usadas na FIFO
+    attribute syn_keep of fifo_usedw : signal is true; 
 
     -- Flags de conclusão individuais dos controladores
     signal write_done : std_logic := '0'; -- Indica término da transferência da BRAM de origem para a FIFO
+    attribute syn_keep of write_done : signal is true; 
+    
     signal read_done  : std_logic := '0'; -- Indica término da transferência da FIFO para a BRAM de destino
+    attribute syn_keep of read_done : signal is true; 
 
 begin
     -- Instância da BRAM de origem: armazena dados gerados pelo WriteController
@@ -100,6 +120,7 @@ begin
         port map (
             clk               => clk,
             reset             => reset,
+            writer_done_in    => write_done,
             bram_addr_out     => rd_bram_addr,
             bram_wren_out     => rd_bram_wren,
             bram_data_out     => rd_bram_data,
