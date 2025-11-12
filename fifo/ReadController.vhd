@@ -8,7 +8,9 @@ entity ReadController is
         -- Sinais de Controle Globais
         clk   : in  std_logic; -- Clock
         reset : in  std_logic; -- Reset
-
+		  
+		  writer_done_in : in std_logic;
+		  
         -- Interface com a BRAM de Destino
         bram_addr_out : out std_logic_vector(10 downto 0); -- 2048 posições (2^11)
         bram_wren_out : out std_logic;                     -- Write enable para o carregamento
@@ -38,73 +40,96 @@ architecture rtl of ReadController is
     signal state        : T_STATE := S_IDLE;                        -- Estado atual
     signal next_state   : T_STATE := S_IDLE;                        -- Próximo estado
     signal addr_counter : unsigned(10 downto 0) := (others => '0'); -- Contador de endereços
+    signal speed_divider : integer range 0 to 6 := 0;               -- Contador de 0 a 6 (7 ciclos)
+    
+    -- Sinal para controlar quando as ações podem ser executadas
+    signal can_proceed  : std_logic := '0';
 
 begin
 
     -- 3. Processo Síncrono: Atualiza o estado e os contadores na borda do clock
-    process(clk, reset)
-    begin
-        if (reset = '1') then
-            state <= S_IDLE;
-            addr_counter <= (others => '0');
-        elsif (rising_edge(clk)) then
-            state <= next_state;
+	process(clk, reset)
+	begin
+		 if (reset = '1') then
+			  state <= S_IDLE;
+			  addr_counter <= (others => '0');
+			  speed_divider <= 0;
+			  can_proceed <= '0';
+		 elsif (rising_edge(clk)) then
+			  state <= next_state;
 
-            -- Lógica de incremento do contador de endereços
-            if (state = S_WRITE_BRAM and addr_counter < 2047) then
-                addr_counter <= addr_counter + 1;
-            elsif (state = S_WRITE_BRAM and addr_counter = 2047) then
-                addr_counter <= (others => '0'); -- Reseta o contador para a escrita
-            end if;
-        end if;
-    end process;
+			  -- A lógica de controle de velocidade agora afeta apenas as ações e
+			  -- o incremento dos contadores, não a atualização de estado.
+			  if speed_divider = 6 then
+					speed_divider <= 0;
+					can_proceed <= '1';  -- Sinaliza que pode prosseguir
+
+					-- O contador de endereço só avança quando uma escrita é
+					-- efetivamente realizada (ou seja, quando state ERA S_WRITE_BRAM).
+					if (state = S_WRITE_BRAM) then
+						 addr_counter <= addr_counter + 1;
+					end if;
+			  else
+					speed_divider <= speed_divider + 1;
+					can_proceed <= '0';  -- Não pode prosseguir nos outros ciclos
+			  end if;
+		 end if;
+	end process;
 
     -- 4. Processo Combinacional: Define as saídas e o próximo estado
-    process(state, fifo_data_in, addr_counter, fifo_empty_in)
-    begin
-        -- Valores padrão para as saídas (evita latches)
-        bram_addr_out <= std_logic_vector(addr_counter);
-        bram_wren_out <= '0';
-        bram_data_out <= (others => '0');
-        fifo_rdreq_out<= '0';
-        transfer_done <= '0';
-        next_state    <= state; -- Permanece no mesmo estado por padrão
+-- CÓDIGO A SER ALTERADO em ReadController.vhd (arquitetura)
 
-        case state is
-            when S_IDLE =>
-                -- Se a FIFO NÃO estiver vazia, comece a ler.
-                if fifo_empty_in = '0' then
-                    next_state <= S_READ_FIFO;
-                end if;
+-- 4. Processo Combinacional: Define as saídas e o próximo estado
+		process(state, fifo_data_in, addr_counter, fifo_empty_in, can_proceed, writer_done_in)
+		begin
+			 -- Valores padrão para as saídas (evita latches)
+			 bram_addr_out <= std_logic_vector(addr_counter);
+			 bram_wren_out <= '0';
+			 bram_data_out <= (others => '0');
+			 fifo_rdreq_out<= '0';
+			 transfer_done <= '0';
+			 next_state    <= state;
 
-            when S_READ_FIFO =>
-                -- Peça um dado para a FIFO
-                fifo_rdreq_out <= '1';
-                -- E vá para o próximo estado para aguardar a chegada do dado
-                next_state <= S_WRITE_BRAM;
+			 -- Só executa ações quando can_proceed está ativo
+			 if can_proceed = '1' then
+				  case state is
+						when S_IDLE =>
+							 -- Se o escritor terminou E a FIFO está vazia, o trabalho acabou.
+							 if writer_done_in = '1' and fifo_empty_in = '1' then
+								  next_state <= S_DONE;
+							 -- Se não, e se a FIFO tiver dados, continue lendo.
+							 elsif fifo_empty_in = '0' then
+								  next_state <= S_READ_FIFO;
+							 end if;
 
-            when S_WRITE_BRAM =>
-                -- O dado chegou. Escreva-o na BRAM.
-                bram_wren_out <= '1';
-                bram_data_out <= fifo_data_in;
+						when S_READ_FIFO =>
+							 -- Peça um dado para a FIFO
+							 fifo_rdreq_out <= '1';
+							 -- E vá para o próximo estado para aguardar a chegada do dado
+							 next_state <= S_WRITE_BRAM;
 
-                -- Verifique se esta foi a última escrita.
-                if addr_counter = 2047 then
-                    next_state <= S_DONE;
-                else
-                    -- Se não foi a última, volte para ler o próximo dado.
-                    next_state <= S_READ_FIFO;
-                end if;
+						when S_WRITE_BRAM =>
+							 -- O dado chegou. Escreva-o na BRAM.
+							 bram_wren_out <= '1';
+							 bram_data_out <= fifo_data_in;
 
-            when S_DONE =>
-                transfer_done <= '1';
-                next_state <= S_DONE; -- Fica travado aqui
+							 -- Se a FIFO ainda tiver dados, continue no loop rápido (S_READ_FIFO).
+							 -- Se a FIFO estiver vazia, saia do loop e vá para S_IDLE verificar o fim da operação.
+							 if fifo_empty_in = '1' then
+								next_state <= S_IDLE;
+							 else
+								next_state <= S_READ_FIFO;
+							 end if;
 
-            -- Garante que todos os casos sejam cobertos
-            when others =>
-                next_state <= S_IDLE;
+						when S_DONE =>
+							 transfer_done <= '1';
+							 next_state <= S_DONE; -- Fica travado aqui
 
-        end case;
-    end process;
+						-- Garante que todos os casos sejam cobertos
+						when others =>
+							 next_state <= S_IDLE;
+				  end case;
+			 end if;
+		end process;
 
 end architecture rtl;

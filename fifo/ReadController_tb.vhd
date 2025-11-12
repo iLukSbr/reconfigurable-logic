@@ -11,6 +11,8 @@ architecture tb of ReadController_tb is
 
     signal clk         : std_logic := '0'; -- Clock
     signal reset       : std_logic := '1'; -- Reset
+	 
+	 signal s_writer_done : std_logic := '0';
 
     signal bram_addr   : std_logic_vector(10 downto 0) := (others => '0'); -- Endereço da BRAM
     signal bram_wren   : std_logic := '0';                                 -- Write enable para a BRAM
@@ -61,6 +63,7 @@ begin
         port map (
             clk             => clk,
             reset           => reset,
+				writer_done_in  => s_writer_done,
             bram_addr_out   => bram_addr,
             bram_wren_out   => bram_wren,
             bram_data_out   => bram_data_w,
@@ -82,30 +85,41 @@ begin
         wait;
     end process;
 
-    producer : process(clk)
-        variable write_index : integer := 0;
-    begin
-        if rising_edge(clk) then
-            fifo_wrreq_d <= fifo_wrreq;
+	producer : process(clk)
+		 variable write_index : integer := 0;
+		 -- Variável para simular o ciclo de 2 clocks (leitura/escrita)
+		 variable can_write   : boolean := true; 
+	begin
+		 if rising_edge(clk) then
+			  if reset = '1' then
+					fifo_wrreq    <= '0';
+					write_index   := 0;
+					s_writer_done <= '0';
+					can_write     := true; -- Reseta o estado
+			  else
+					-- Lógica de escrita alternada
+					if write_index < c_total_words and can_write then
+						 if fifo_full = '0' then
+							  fifo_data_in <= std_logic_vector(to_unsigned(write_index mod 256, fifo_data_in'length));
+							  fifo_wrreq   <= '1';
+							  write_index  := write_index + 1;
+						 else
+							  fifo_wrreq <= '0';
+						 end if;
+					else
+						 fifo_wrreq <= '0';
+					end if;
 
-            if reset = '1' then
-                fifo_wrreq <= '0';
-                write_index := 0;
-            else
-                if write_index < c_total_words then
-                    if fifo_full = '0' then
-                        fifo_data_in <= std_logic_vector(to_unsigned(write_index mod 256, fifo_data_in'length));
-                        fifo_wrreq   <= '1';
-                        write_index  := write_index + 1;
-                    else
-                        fifo_wrreq <= '0';
-                    end if;
-                else
-                    fifo_wrreq <= '0';
-                end if;
-            end if;
-        end if;
-    end process;
+					-- Inverte a permissão de escrita a cada ciclo para criar o atraso
+					can_write := not can_write;
+
+					-- Sinaliza que terminou APENAS quando o contador atingir o limite
+					if write_index = c_total_words then
+						 s_writer_done <= '1';
+					end if;
+			  end if;
+		 end if;
+	end process;
 
     checker : process(clk)
         variable expected_value : integer := 0;
