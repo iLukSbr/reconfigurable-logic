@@ -349,7 +349,8 @@
  *
  */
 
-#define DHCP_CLIENT
+// #define DHCP_CLIENT
+// #define DHCP_SERVER
 #define INCLUDE_TCP
 #define INICHE_DEFAULT_IF "NOT_USED"
 #define IP_FRAGMENTS

@@ -47,7 +47,6 @@
 
 #define IPPROTO_TCP 6
 
-
 /* Function prototypes */
 void SSSRXTask(void);
 void SSSTXTask(void);
@@ -215,23 +214,28 @@ void sss_reset_connection(SSSConn* conn)
 }
 
 /*
- * sss_send_menu()
+ * sss_send_simple_response()
  * 
- * This routine will transmit the menu out to the telnet client.
+ * This routine will transmit simple response out to the telnet client.
  */
-void sss_send_menu(SSSConn* conn)
+void sss_send_simple_response(SSSConn* conn)
 {
   alt_u8  tx_buf[SSS_TX_BUF_SIZE];
   alt_u8 *tx_wr_pos = tx_buf;
 
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"=================================\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"Nios II Simple Socket Server Menu\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"=================================\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"0-7: Toggle board LEDs D0 - D7\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"S: 7-Segment LED Light Show\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"Q: Terminate session\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"=================================\n\r");
-  tx_wr_pos += sprintf((char*)tx_wr_pos,"Enter your choice & press return:\n\r");
+  const char *response_body = "<html><body><h1>Welcome to NIOS II Server</h1></body></html>";
+  int content_length = strlen(response_body);
+
+  tx_wr_pos += sprintf((char*)tx_wr_pos,
+	"HTTP/1.1 200 OK\r\n"
+	"Content-Type: text/html\r\n"
+	"Content-Length: %d\r\n"
+	"Access-Control-Allow-Origin: *\r\n"
+	"Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
+	"Access-Control-Allow-Headers: Content-Type\r\n"
+	"\r\n"
+	"%s", content_length, response_body
+);
 
   send(conn->fd, (char*)tx_buf, tx_wr_pos - tx_buf, 0);
   
@@ -267,7 +271,7 @@ void sss_handle_accept(int listen_socket, SSSConn* conn)
      else
      {
         (conn)->fd = socket;
-        sss_send_menu(conn);
+        // sss_send_simple_response(conn);
         printf("[sss_handle_accept] accepted connection request from %s\n",
                inet_ntoa(incoming_addr.sin_addr));
      }
@@ -307,68 +311,126 @@ void sss_exec_command(SSSConn* conn)
    int i;
 
    printf("[sss_exec_command] executing command on RX data\n");
-   // Look for HTTP POST request
+
+   /* OPTIONS handling (CORS) */
+   if (strstr((char*)conn->rx_buffer, "OPTIONS") == conn->rx_buffer) {
+       tx_wr_pos += sprintf((char*)tx_wr_pos,
+           "HTTP/1.1 204 No Content\r\n"
+           "Access-Control-Allow-Origin: *\r\n"
+           "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
+           "Access-Control-Allow-Headers: Content-Type\r\n"
+           "Content-Length: 0\r\n"
+           "\r\n"
+       );
+       send(conn->fd, (char*)tx_buf, tx_wr_pos - tx_buf, 0);
+       conn->close = 1;
+       return;
+   }
+
+   /* POST /process */
    if (strstr((char*)conn->rx_buffer, "POST /process") != NULL) {
       printf("[sss_exec_command] processing POST /process request\n");
-      // Find Content-Length header
+
+      /* Encontrar Content-Length */
       content_length_str = strstr((char*)conn->rx_buffer, "Content-Length:");
       if (content_length_str) {
          content_length = atoi(content_length_str + 15);
       }
 
-      // Find the body (after double CRLF)
+      /* Encontrar início do body */
       body_start = strstr((char*)conn->rx_buffer, "\r\n\r\n");
       if (body_start) {
-        printf("[sss_exec_command] found body with length %d\n", content_length);
-         body_start += 4; // Skip \r\n\r\n
+         printf("[sss_exec_command] found body with length %d\n", content_length);
+         body_start += 4;
          data_start = body_start;
 
-         // Process the string: increment ASCII chars, handle 0xF7 -> 0
-         for (i = 0; i < content_length && data_start[i] != '\0'; i++) {
-            if (data_start[i] == (char)0xF7) {
-               data_start[i] = 0; // Set 0xF7 to 0
-            } else {
-               data_start[i] = data_start[i] + 1; // Increment ASCII
-            }
-         }
-         printf("[sss_exec_command] processed data: %s\n", data_start);
+         /* Buffer de saída (bytes single-byte Latin-1) */
+         unsigned char out_buf[SSS_TX_BUF_SIZE];
+         int in_idx = 0;
+         int out_len = 0;
 
-         // Send HTTP response with processed data
+         unsigned char *in = (unsigned char*)data_start;
+
+         while (in_idx < content_length && out_len < (int)sizeof(out_buf)) {
+             unsigned int b = in[in_idx];
+
+             /* Detecta sequência UTF-8 de 2 bytes para U+00XX (0xC2/0xC3 ...) */
+             if ((b == 0xC2 || b == 0xC3) && (in_idx + 1 < content_length)) {
+                 unsigned int b2 = in[in_idx + 1];
+                 if ((b2 & 0xC0) == 0x80) {
+                     unsigned int codepoint = ((b & 0x1F) << 6) | (b2 & 0x3F); /* U+00XX */
+                     unsigned char mapped = (unsigned char)(codepoint & 0xFF);
+                     printf("[sss_exec_command] decoded UTF-8 0x%02X 0x%02X -> U+%04X -> 0x%02X\n",
+                            (unsigned int)b, (unsigned int)b2, codepoint, (unsigned int)mapped);
+                     b = mapped;
+                     in_idx += 2;
+                 } else {
+                     /* sequência inválida: trate o byte atual como-is */
+                     in_idx++;
+                 }
+             } else {
+                 /* byte único (já Latin-1 ou octet stream) */
+                 in_idx++;
+             }
+
+             /* Agora 'b' é um único byte (Latin-1). Aplicar processamento. */
+             if (b == 0xF7) {
+                 out_buf[out_len++] = '0';
+                 printf("[sss_exec_command] converted 0x%02X to '0'\n", (unsigned int)0xF7);
+             } else {
+                 unsigned char newc = (unsigned char)(b + 1);
+                 if (b >= 0x20 && b <= 0x7E) {
+                     printf("[sss_exec_command] incremented ASCII character '%c' (0x%02X) to '%c' (0x%02X)\n",
+                            (unsigned int)b, (unsigned int)b, (unsigned int)newc, (unsigned int)newc);
+                 } else {
+                     printf("[sss_exec_command] incremented byte 0x%02X to 0x%02X\n",
+                            (unsigned int)b, (unsigned int)newc);
+                 }
+                 out_buf[out_len++] = newc;
+             }
+         } /* while */
+
+         printf("[sss_exec_command] processed data length: %d\n", out_len);
+
+         /* Envia resposta HTTP com bytes processados (Latin-1) */
          tx_wr_pos += sprintf((char*)tx_wr_pos,
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/plain\r\n"
-            "Access-Control-Allow-Origin: *\r\n"
-            "Content-Length: %d\r\n"
-            "\r\n", content_length);
-         memcpy(tx_wr_pos, data_start, content_length);
-         tx_wr_pos += content_length;
+             "HTTP/1.1 200 OK\r\n"
+             "Content-Type: text/plain; charset=ISO-8859-1\r\n"
+             "Access-Control-Allow-Origin: *\r\n"
+             "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
+             "Access-Control-Allow-Headers: Content-Type\r\n"
+             "Content-Length: %d\r\n"
+             "\r\n", out_len);
+         memcpy(tx_wr_pos, out_buf, out_len);
+         tx_wr_pos += out_len;
       } else {
           printf("[sss_exec_command] no body found in POST /process request\n");
-          // No body found, send error
           tx_wr_pos += sprintf((char*)tx_wr_pos,
               "HTTP/1.1 400 Bad Request\r\n"
-              "Content-Type: text/plain\r\n"
+              "Content-Type: text/plain; charset=ISO-8859-1\r\n"
               "Access-Control-Allow-Origin: *\r\n"
+              "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
+              "Access-Control-Allow-Headers: Content-Type\r\n"
               "Content-Length: 12\r\n"
               "\r\n"
               "No body data");
       }
    } else {
       printf("[sss_exec_command] received non-POST /process request\n");
-      // Not a POST to /process, send 404
       tx_wr_pos += sprintf((char*)tx_wr_pos,
          "HTTP/1.1 404 Not Found\r\n"
-         "Content-Type: text/plain\r\n"
+         "Content-Type: text/plain; charset=ISO-8859-1\r\n"
          "Access-Control-Allow-Origin: *\r\n"
+         "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
+         "Access-Control-Allow-Headers: Content-Type\r\n"
          "Content-Length: 9\r\n"
          "\r\n"
          "Not found");
    }
-   printf("[sss_exec_command] sending response\n");
 
+   printf("[sss_exec_command] sending response\n");
    send(conn->fd, (char*)tx_buf, tx_wr_pos - tx_buf, 0);
    printf("[sss_exec_command] response sent\n");
-   // Close connection after response
    conn->close = 1;
 
    return;
@@ -477,6 +539,7 @@ void SSSSimpleSocketServerTask()
 	struct sockaddr_in sa;
 	int res;
 	int SocketFD;
+	char ip_str[16];
 
 	if (USAR_SERVER == 0)
 	{
@@ -490,7 +553,8 @@ void SSSSimpleSocketServerTask()
 
 		sa.sin_family = AF_INET;
 		sa.sin_port = htons(30);
-		res = inet_pton(AF_INET, "169.254.1.1", &sa.sin_addr);
+		sprintf(ip_str, "%s.%s.%s.%s", GWADDR0, GWADDR1, GWADDR2, GWADDR3);
+		res = inet_pton(AF_INET, ip_str, &sa.sin_addr);
 
 		if (connect(SocketFD, (struct sockaddr *)&sa, sizeof sa) == -1) {
 			perror("connect failed");

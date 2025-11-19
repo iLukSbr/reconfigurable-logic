@@ -96,12 +96,6 @@ void SSSInitialTask(void *task_data)
    */   
   alt_iniche_init();
 
-  /* Set static IP address to match PC's subnet */
-//  nets[0]->n_dhcp = 0;  /* Disable DHCP */
-//  nets[0]->n_ipaddr = inet_addr("169.254.1.1");
-//  nets[0]->snmask = inet_addr("255.255.0.0");
-//  nets[0]->n_defgw = 0;
-
   printf("\nNicheStack TCP/IP Stack initialized.\n");
   netmain(); 
   printf("NicheStack TCP/IP Stack main task started.\n");

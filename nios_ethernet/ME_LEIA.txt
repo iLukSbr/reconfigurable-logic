@@ -1,7 +1,16 @@
+Universidade Tecnológica Federal do Paraná - UTFPR
+ELEW33-S71 Lógica Reconfigurável
+Prática 7 - Interfaceamento NIOS ETHERNET
+Projeto Nios II com servidor TCP/IP para processar strings via socket
+Prof. Luiz Fernando Copetti
+
+Alunos:
+Lucas Yukio Fukuda Matsumoto e Letícia Walger Amaro
+
 COMO RODAR:
 
 1 Utilize o Quartus II versão 13.0sp1
-2 Descompacte PROJ_FINAL_GEOVANA_JIMMY.zip para obter a pasta interna DE2_NET. Este projeto deve estar na pasta da altera, por exemplo: C:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET
+2 Descompacte .zip para obter a pasta interna DE2_NET. Este projeto deve estar na pasta da altera, por exemplo: C:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET
 3 Abra o DE2_NET.qpf
 4 Vá na aba Files do Project Navigator e delete o arquivo system_0/synthesis/system_0.qip
 5 Abre o Qsys em Tools->Qsys
@@ -28,9 +37,11 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 16 Agora existem 2 opções:
 	16.1 Se os projetos simple_socket e simple_socket_bsp estão aparecendo e são expandíveis (pastinha cor amarela):
 		16.1.1 Clique com o botão direito em cada projeto e clique em Clean Project
-		16.1.2 Abra o arquivo iniche_init.c, dentro da função SSSInitialTask irá encontrar 2 linhas de código e fazer alterações:
-			- sa.sin_port = htons(7777); // ALTERAR PORTA A SER UTILIZADA AQUI
-			- res = inet_pton(AF_INET, "192.168.1.110", &sa.sin_addr); //ALTERAR O IP DO SERVIDOR AQUI
+		16.1.2
+			- Em simple_socket_server.h alterar o IPADDR para o IP que deseja atribuir a placa NIOS II (deve estar na mesma subrede do Gateway, exemplo 192.168.137.10)
+			- Em simple_socket_server.h alterar o GWADDR para o IP do gateway da sua rede (normalmente o IP do roteador, usar ipconfig no Windows, exemplo 192.168.137.1)
+			- Em simple_socket_server.h alterar o SSS_PORT para a porta que escolheu (exemplo 80)
+			- Em system.h comentar #define DHCP_CLIENT para usar IP fixo
 			- Desativar firewall do antivírus se tiver outro fora o Windows Defender instalado e permitir a porta escolhida no firewall do Windows Defender
 		16.1.3 Vá em Project -> Build All
 		16.1.4 Se tudo comilar sem erros, é possível fazer Botão direito em simple_socket -> Run As...->Nios II Hardware
@@ -39,33 +50,65 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 			nios2-download -g simple_socket.elf && nios2-terminal
 		16.1.5 Se der algum erro na hora de rodar apenas, tente denovo, o Eclipse tem dessas
 		16.1.6 Se rodar como deve, algo assim deve aparecer no Nios II Console:
-			InterNiche Portable TCP/IP, v3.1 
+			$ nios2-download -g simple_socket.elf && nios2-terminal
+			Using cable "USB-Blaster [USB-0]", device 1, instance 0x00
+			Pausing target processor: OK
+			Initializing CPU cache (if present)
+			OK
+			Downloaded 299KB in 4.0s (74.7KB/s)
+			Verified OK
+			Starting processor at address 0x008001BC
+			nios2-terminal: connected to hardware target using JTAG UART on cable
+			nios2-terminal: "USB-Blaster [USB-0]", device 1, instance 0
+			nios2-terminal: (Use the IDE stop button or Ctrl-C to terminate)
 
-			Copyright 1996-2008 by InterNiche Technologies. All rights reserved. 
+
+			NicheStack TCP/IP Stack initialized.
+			InterNiche Portable TCP/IP, v3.1
+
+			Copyright 1996-2008 by InterNiche Technologies. All rights reserved.
 			Your Ethernet MAC address is 00:07:ed:ff:cd:15
+			Static IP Address is 192.168.137.10
 			prepped 1 interface, initializing...
 			dm9ka_init
 			Created "Inet main" task (Prio: 2)
 			Created "clock tick" task (Prio: 3)
+			NicheStack TCP/IP Stack main task started.
 			mctest init called
-			IP address of et1 : 10.3.2.175
-			Acquired IP address via DHCP client for interface: et1
-			IP address : 192.168.1.101
-			Subnet Mask: 255.255.255.0
-			Gateway    : 192.168.1.1
+			IP address of et1 : 192.168.137.10
 
-			Simple Socket Server starting up
-			estou aqui
-			Socket criado
+			HTTP Server starting up
+			Created "sss rx task" task (Prio: 8)
+			Created "sss tx task" task (Prio: 9)
+			[sss_rx_task] RX Task listening on port 80
+			[sss_tx_task] TX Task started
 		16.1.7 Se deu certo, precisa testar com um server agora. Primeiro pare o programa do Eclipse.
-		16.1.8 Pegue o tcpserver.py (fazendo alterações de ip e porta dentro) fornecido 
+		16.1.8 Pegue o tcpserver.py (fazendo alterações de ip e porta do NIOS dentro, coloque o IP que definiu no IPADDR do simple_socket_server.h) fornecido 
 		  e rode ele fazendo o comando python .\tcpserver.py na linha de comando no local que estiver o arquivo
 		16.1.9 Rode novamente com Run As->Nios II Hardware
-		16.1.10 Se o roteador não bloqueou nada, esta pronto! O LCD da placa deve estar mostrando o arquivo atual,
-		  SW0 e SW1 mudam o arquivo pedido e clicar com o KEY1 pede o arquivo. Tendo sucesso o arquivo aparece no
-		  LCD, podendo ser movido para cima ou para baixo com KEY3 e KEY2. Clicar KEY1 novamente retorna a seleção
-		  de arquivo
-
+		16.1.10 Se o roteador não bloqueou nada, esta pronto!
+		Basta abrir o site no navegador, por exemplo http://localhost:8080 e digitar a string, então clicar em Processar String
+			No terminal que rodou tcpserver.py deve aparecer:
+				PC HTTP Server for NIOS String Processor
+				Server running on port 8080
+				NIOS IP configured as: 192.168.137.10:80
+				Open http://localhost:8080 in your browser
+				Served index.html successfully
+				Served NIOS IP: 192.168.137.10:80
+			No NIOS II console, deve aparecer:
+				[sss_handle_accept] accepted connection request from 192.168.137.1
+				[sss_handle_receive] processing RX data
+				[sss_handle_receive] receiving data on socket
+				[sss_handle_receive] received 475 bytes
+				[sss_handle_receive] complete HTTP request received
+				[sss_exec_command] executing command on RX data
+				[sss_exec_command] processing POST /process request
+				[sss_exec_command] found body with length 3
+				[sss_exec_command] processed data: bcd
+				[sss_exec_command] sending response
+				[sss_exec_command] response sent
+			E no site aparecerá (pode apertar F12 para ver logs no console do navegador):
+				Processed String: "string que vc enviou"
 	16.2 Se os projetos simple_socket e simple_socket_bsp estão aparecendo e NÃO são expandíveis (pastinha cor azul):
 		16.2.1 Delete ambos com botão direito -> Delete (sem deletar do computador)
 		16.2.2 Botão direito no Project Explorer->Import...->Nios II Software Build Tools Project->

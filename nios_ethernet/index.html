@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIOS String Processor</title>
     <style>
@@ -79,7 +79,7 @@
         <form id="stringForm">
             <div class="form-group">
                 <label for="inputString">Digite uma string para processar:</label>
-                <input type="text" id="inputString" name="inputString" placeholder="Ex: hello world" required>
+                <input type="text" id="inputString" name="inputString" placeholder="Ex: hello world" maxlength="100" required>
             </div>
             <button type="submit">Processar String</button>
         </form>
@@ -92,10 +92,80 @@
     </div>
 
     <script>
+        // Convert string to bytes ISO-8859-1
+        function toLatin1Bytes(str) {
+            const bytes = [];
+            for (let i = 0; i < str.length; i++) {
+                bytes.push(str.charCodeAt(i) & 0xFF);
+            }
+            return new Uint8Array(bytes);
+        }
+
+        // Enforce max length and alert when user attempts to type beyond limit
+        (function() {
+            const MAX_LEN = 100;
+            const inputEl = document.getElementById('inputString');
+
+            // Defensive: truncate on input (covers paste/IME)
+            inputEl.addEventListener('input', () => {
+                if (inputEl.value.length > MAX_LEN) {
+                    inputEl.value = inputEl.value.slice(0, MAX_LEN);
+                    alert('Máximo de 100 caracteres atingido.');
+                }
+            });
+
+            // Prevent typing when at limit and show alert
+            inputEl.addEventListener('keydown', (e) => {
+                const isPrintable = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+                if (isPrintable && inputEl.value.length >= MAX_LEN) {
+                    e.preventDefault();
+                    alert('Máximo de 100 caracteres atingido.');
+                }
+            });
+
+            // Handle paste: consider current selection (replacement). Allow paste when selection length
+            // frees enough space. Otherwise truncate the pasted text to the allowed number of chars.
+            inputEl.addEventListener('paste', (e) => {
+                const paste = (e.clipboardData || window.clipboardData).getData('text') || '';
+                const start = inputEl.selectionStart;
+                const end = inputEl.selectionEnd;
+                const selectionLen = Math.max(0, end - start);
+                const currentLen = inputEl.value.length;
+
+                // Available space after replacing selection
+                const available = MAX_LEN - (currentLen - selectionLen);
+
+                if (available >= paste.length) {
+                    // Enough space: allow default paste behavior
+                    return; // browser will handle paste
+                }
+
+                // Not enough space: prevent default and insert truncated text
+                e.preventDefault();
+                if (available <= 0) {
+                    // Nothing fits: just alert
+                    alert('Conteúdo colado excede o limite e foi rejeitado.');
+                    return;
+                }
+
+                const toInsert = paste.slice(0, available);
+                inputEl.value = inputEl.value.slice(0, start) + toInsert + inputEl.value.slice(end);
+                // Move caret to end of inserted text
+                const caret = start + toInsert.length;
+                inputEl.setSelectionRange(caret, caret);
+                alert('Conteúdo colado excedeu o limite e foi truncado.');
+            });
+        })();
         document.getElementById('stringForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
+            const MAX_LEN = 100;
             const inputString = document.getElementById('inputString').value;
+
+            if (inputString.length > MAX_LEN) {
+                alert("Máximo de 100 caracteres permitido.");
+                return;
+            }
+    
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
 
@@ -113,19 +183,22 @@
                 const niosIP = ipData.ip;
 
                 // Send string to NIOS
+                const bytes = toLatin1Bytes(inputString);
                 const response = await fetch(`http://${niosIP}:80/process`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'text/plain',
+                        'Content-Type': 'application/octet-stream',
                     },
-                    body: inputString
+                    body: bytes
                 });
+                console.log("Sent string: " + inputString + " to NIOS at IP: " + niosIP);
 
                 if (!response.ok) {
                     throw new Error(`Erro HTTP: ${response.status}`);
                 }
 
                 const processedString = await response.text();
+                console.log("Received processed string: " + processedString + " from NIOS at IP: " + niosIP);
 
                 // Show result
                 result.className = 'result success';

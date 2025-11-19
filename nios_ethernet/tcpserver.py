@@ -6,7 +6,7 @@ import argparse
 
 # Configuration
 HTTP_PORT = 8080
-NIOS_IP = "192.168.137.66"  # Static NIOS IP in same subnet as PC
+NIOS_IP = "192.168.137.10"  # Static NIOS IP in same subnet as PC
 NIOS_PORT = 80            # Default NIOS webserver port
 
 # Parse command line arguments
