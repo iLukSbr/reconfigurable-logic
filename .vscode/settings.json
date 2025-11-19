@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "*.vhd": "vhdl",
+        "*.vhdl": "vhdl",
+        "*.v": "verilog",
+        "*.sv": "systemverilog"
+    },
+    "C_Cpp.default.includePath": [
+        "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/nios2-elf/include",
+        "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/nios2-elf/include/sys",
+        "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/lib/gcc/nios2-elf/4.1.2/include"
+    ],
+    "C_Cpp.default.defines": [
+        "_nios2__",
+        "__nios2__"
+    ],
+    "C_Cpp.intelliSenseCachePath": ".vscode/ipch"
+}

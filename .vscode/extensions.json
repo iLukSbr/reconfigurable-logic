@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ms-vscode.cpptools",
+        "ms-vscode.vscode-intellicode",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "mshr-h.veriloghdl",
+        "ms-vscode.vscode-json",
+        "ms-vscode.vscode-embedded-tools"
+    ]
+}

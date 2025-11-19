@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "NIOS II",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/nios2-elf/include",
+                "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/nios2-elf/include/sys",
+                "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/lib/gcc/nios2-elf/4.1.2/include"
+            ],
+            "defines": [
+                "_nios2__",
+                "__nios2__"
+            ],
+            "compilerPath": "C:/altera/13.0sp1/nios2eds/bin/gnu/H-i686-mingw32/bin/nios2-elf-gcc.exe",
+            "cStandard": "c89",
+            "cppStandard": "c++98",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+    "version": 4
+}

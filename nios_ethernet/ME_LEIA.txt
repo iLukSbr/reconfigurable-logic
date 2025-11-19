@@ -7,6 +7,8 @@ Prof. Luiz Fernando Copetti
 Alunos:
 Lucas Yukio Fukuda Matsumoto e Letícia Walger Amaro
 
+A pasta prints contém imagens e vídeos do funcionamento do projeto.
+
 COMO RODAR:
 
 1 Utilize o Quartus II versão 13.0sp1
@@ -117,3 +119,20 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 			   Project name: simple_socket_bsp
 			   Faça a mesma coisa para o simple_socket (deixando o Project name SEM o _bsp)
 		16.2.3 Retome a partir de 16.1.1
+
+Problemas no bsp:
+Open the NIOS II Command Shell (or Eclipse with NIOS II plugins) where the Altera tools are properly configured in the PATH.
+
+Navigate to the BSP directory:
+cd c:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET\software\simple_socket_bsp
+
+Regenerate the BSP by running:
+nios2-bsp ucosii . [system_0.sopcinfo](http://_vscodecontentref_/4) --set hal.make.bsp_cflags_defined_symbols -DTSE_MY_SYSTEM --cmd enable_sw_package altera_iniche
+
+nios2-bsp-generate-files --settings=settings.bsp --bsp-dir=.
+
+make
+
+cd ../simple_socket
+
+make

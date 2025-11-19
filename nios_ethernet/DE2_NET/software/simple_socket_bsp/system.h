@@ -2,9 +2,9 @@
  * system.h - SOPC Builder system and BSP software package information
  *
  * Machine generated for CPU 'cpu_0' in SOPC Builder design 'system_0'
- * SOPC Builder design path: J:/Altera/13.0sp1/projects/DE2_CD/DE2_demonstrations_Qsys/DE2_NET/system_0.sopcinfo
+ * SOPC Builder design path: ../../system_0.sopcinfo
  *
- * Generated: Thu Jul 05 22:54:04 BRT 2018
+ * Generated: Wed Nov 19 15:04:09 BRST 2025
  */
 
 /*
@@ -349,8 +349,7 @@
  *
  */
 
-// #define DHCP_CLIENT
-// #define DHCP_SERVER
+#define DHCP_CLIENT
 #define INCLUDE_TCP
 #define INICHE_DEFAULT_IF "NOT_USED"
 #define IP_FRAGMENTS
@@ -605,7 +604,7 @@
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1530840655
+#define SYSID_QSYS_0_TIMESTAMP 1763570452
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 
