@@ -127,7 +127,7 @@ Navigate to the BSP directory:
 cd c:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET\software\simple_socket_bsp
 
 Regenerate the BSP by running:
-nios2-bsp ucosii . [system_0.sopcinfo](http://_vscodecontentref_/4) --set hal.make.bsp_cflags_defined_symbols -DTSE_MY_SYSTEM --cmd enable_sw_package altera_iniche
+nios2-bsp ucosii . ../../system_0.sopcinfo --set hal.make.bsp_cflags_defined_symbols -DTSE_MY_SYSTEM --cmd enable_sw_package altera_iniche
 
 nios2-bsp-generate-files --settings=settings.bsp --bsp-dir=.
 
