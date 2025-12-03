@@ -45,6 +45,8 @@
 #include "basic_io.h"
 #include <sys/socket.h>
 
+#include "led.h"
+
 #define IPPROTO_TCP 6
 
 /* Function prototypes */
@@ -166,6 +168,7 @@ void SSSCreateTasks(void)
    INT8U error_code;
 
    // RX and TX tasks are now created with TK_NEWTASK in iniche_init.c
+   printf("Creating non-socket tasks...\n");
 
    error_code = OSTaskCreateExt(LED7SegLightshowTask,
                              NULL,
@@ -179,6 +182,8 @@ void SSSCreateTasks(void)
 
    alt_uCOSIIErrorHandler(error_code, 0);
 
+   printf("LED7SegLightshowTask created.\n");
+
    error_code = OSTaskCreateExt(LEDManagementTask,
                               NULL,
                               (void *)&LEDManagementTaskStk[TASK_STACKSIZE-1],
@@ -190,6 +195,8 @@ void SSSCreateTasks(void)
                               0);
 
    alt_uCOSIIErrorHandler(error_code, 0);
+
+   printf("LEDManagementTask created.\n");
 
 }
 

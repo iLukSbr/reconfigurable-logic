@@ -15,11 +15,12 @@ O cliente tem uma visualização (animação) de simulação de tráfego na pág
 Há um seletor para escolher qual a cor inicial do semáforo 0 apenas.
 Há um quadradinho de marcar/desmarcar se quer ativar tempos dinâmicos.
 
-O cliente envia uma string no formato "RRRYYYGGGRRRYYYGGG":
-A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, e a segunda parte RRRYYYGGG (9 chars) representa os tempos do semáforo 1.
+O cliente envia uma string no formato "RRRYYYGGGRRRYYYGGGI":
+A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, a segunda parte RRRYYYGGG (9 chars) representa os tempos do semáforo 1 e a última parte I representa o estado inicial.
 RRR tempo em segundos para o sinal vermelho;
 YYY tempo em segundos para o sinal amarelo;
 GGG tempo em segundos para o sinal verde.
+I estado inicial para os dois semáforos.
 O servidor NIOS II processa essa string e ajusta os tempos dos semáforos de acordo.
 O servidor responde com a string "OK" se os tempos forem configurados corretamente ou "ERROR" se houver algum problema na configuração.
 A mensagem é reenviada até receber "OK".
@@ -67,7 +68,7 @@ COMO RODAR:
 Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja verde, continue caso contrário verifique conexão da JTAG
 14 Deixe aberto o Programmer e a janela "OpenCore Plus Status" e inicie o Eclipse em Tools -> Nios II Software Build Tools for Eclipse
 15 No Workspace selecione SeuCaminhoAtéaPasta\DE2_NET\software
-16 Agora existem 2 opções:
+16 Agora:
 	16.1 Se os projetos simple_socket e simple_socket_bsp estão aparecendo e são expandíveis (pastinha cor amarela):
 		16.1.1 Clique com o botão direito em cada projeto e clique em Clean Project
 		16.1.2
@@ -76,11 +77,17 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 			- Em simple_socket_server.h alterar o SSS_PORT para a porta que escolheu (exemplo 80)
 			- Em system.h comentar #define DHCP_CLIENT para usar IP fixo
 			- Desativar firewall do antivírus se tiver outro fora o Windows Defender instalado e permitir a porta escolhida no firewall do Windows Defender
-		16.1.3 Vá em Project -> Build All
-		16.1.4 Se tudo comilar sem erros, é possível fazer Botão direito em simple_socket -> Run As...->Nios II Hardware
-		Ou abra Nios II 13.0sp1 Command Shell e rode os comandos:
-			cd SeuCaminhoAtéaPasta\DE2_NET\software\simple_socket
+		16.1.3 abra Nios II 13.0sp1 Command Shell e rode os comandos:
+			cd SeuCaminhoAtéaPasta\DE2_NET\software\simple_socket_bsp
+			make
+			cd ../simple_socket
+			make
 			nios2-download -g simple_socket.elf && nios2-terminal
+		16.1.4 Se der problemas no bsp:
+			cd c:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET\software\simple_socket_bsp
+			nios2-bsp ucosii . ../../system_0.sopcinfo --set hal.make.bsp_cflags_defined_symbols -DTSE_MY_SYSTEM --cmd enable_sw_package altera_iniche
+			nios2-bsp-generate-files --settings=settings.bsp --bsp-dir=.
+			Repita o make do passo 16.1.3
 		16.1.5 Se der algum erro na hora de rodar apenas, tente denovo, o Eclipse tem dessas
 		16.1.6 Se rodar como deve, algo assim deve aparecer no Nios II Console:
 			$ nios2-download -g simple_socket.elf && nios2-terminal
@@ -150,20 +157,3 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 			   Project name: simple_socket_bsp
 			   Faça a mesma coisa para o simple_socket (deixando o Project name SEM o _bsp)
 		16.2.3 Retome a partir de 16.1.1
-
-Problemas no bsp:
-Open the NIOS II Command Shell (or Eclipse with NIOS II plugins) where the Altera tools are properly configured in the PATH.
-
-Navigate to the BSP directory:
-cd c:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET\software\simple_socket_bsp
-
-Regenerate the BSP by running:
-nios2-bsp ucosii . ../../system_0.sopcinfo --set hal.make.bsp_cflags_defined_symbols -DTSE_MY_SYSTEM --cmd enable_sw_package altera_iniche
-
-nios2-bsp-generate-files --settings=settings.bsp --bsp-dir=.
-
-make
-
-cd ../simple_socket
-
-make

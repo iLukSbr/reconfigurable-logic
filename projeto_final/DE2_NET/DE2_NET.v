@@ -2,30 +2,13 @@
 // Copyright (c) 2012 by Terasic Technologies Inc.
 // ============================================================================
 //
-
-// Instantiate sinaleiro (VHDL) and connect its outputs to board HEX/LED signals
-// sinaleiro files are in folder "sinaleiro/" and were added to the project
-// Connect clk/rst appropriately (use BOARD CLOCK_50 and CPU_RESET)
-sinaleiro sinaleiro_inst (
-	.o_seg_un(HEX2),
-	.o_seg_dez(HEX3),
-	.leds_bcd(LEDR[7:0]),
-	.rst(CPU_RESET),
-	.clk(CLOCK_50),
-	.o0_vermelho(LEDR[8]),
-	.o0_amarelo(LEDR[9]),
-	.o0_verde(LEDR[10]),
-	.o1_vermelho(LEDR[11]),
-	.o1_amarelo(LEDR[12]),
-	.o1_verde(LEDR[13])
-	);
-
-I2C_AV_Config 	u1	( 	//	Host Side
-					.iCLK(CLOCK_50),
-					.iRST_N(KEY[0]),
-					//	I2C Side
-					.I2C_SCLK(I2C_SCLK),
-					.I2C_SDAT(I2C_SDAT) 	);
+// Permission:
+//
+//   Terasic grants permission to use and modify this code for use
+//   in synthesis for all Terasic Development Boards and Altera Development 
+//   Kits made by Terasic.  Other use of this code, including the selling 
+//   ,duplication, or modification of any portion is strictly prohibited.
+//
 // Disclaimer:
 //
 //   This VHDL/Verilog or C/C++ source code is intended as a design reference
@@ -319,22 +302,6 @@ wire	CPU_CLK;
 wire	CPU_RESET;
 wire	CLK_18_4;
 wire	CLK_25;
-// internal nets to capture original seg7 outputs from system_0
-wire [6:0] seg7_int0;
-wire [6:0] seg7_int1;
-wire [6:0] seg7_int2;
-wire [6:0] seg7_int3;
-wire [6:0] seg7_int4;
-wire [6:0] seg7_int5;
-wire [6:0] seg7_int6;
-wire [6:0] seg7_int7;
-
-// nets for sinaleiro instance
-wire [6:0] sinaleiro_seg_un;
-wire [6:0] sinaleiro_seg_dez;
-wire [7:0] sinaleiro_leds_bcd;
-wire sinaleiro_o0_vermelho, sinaleiro_o0_amarelo, sinaleiro_o0_verde;
-wire sinaleiro_o1_vermelho, sinaleiro_o1_amarelo, sinaleiro_o1_verde;
 
 //	Flash
 assign	FL_RST_N	=	1'b1;
@@ -396,15 +363,15 @@ system_0 	u0	(
                 // the_SD_DAT
                  .bidir_port_to_and_from_the_SD_DAT(SD_DAT[0]),
 
-				    // the_SEG7_Display (routed to internal nets to allow external sinaleiro drive)
-					    .seg7_display_oSEG0                   (seg7_int0),        //seg7_display.oSEG0
-				     .seg7_display_oSEG1                   (seg7_int1),        //.oSEG1
-				     .seg7_display_oSEG2                   (seg7_int2),        //.oSEG2
-				     .seg7_display_oSEG3                   (seg7_int3),        //.oSEG3
-				     .seg7_display_oSEG4                   (seg7_int4),        //.oSEG4
-				     .seg7_display_oSEG5                   (seg7_int5),        //.oSEG5
-				     .seg7_display_oSEG6                   (seg7_int6),        //.oSEG6
-				     .seg7_display_oSEG7                   (seg7_int7),        //.oSEG7
+                // the_SEG7_Display
+					  .seg7_display_oSEG0                   (HEX0),        //seg7_display.oSEG0
+                 .seg7_display_oSEG1                   (HEX1),        //.oSEG1
+                 .seg7_display_oSEG2                   (HEX2),        //.oSEG2
+                 .seg7_display_oSEG3                   (HEX3),        //.oSEG3
+                 .seg7_display_oSEG4                   (HEX4),        //.oSEG4
+                 .seg7_display_oSEG5                   (HEX5),        //.oSEG5
+                 .seg7_display_oSEG6                   (HEX6),        //.oSEG6
+                 .seg7_display_oSEG7                   (HEX7),        //.oSEG7
 
                 // the_DM9000A
 				     .dm9000a_iOSC_50                      (CLOCK_50),   // .iOSC_50

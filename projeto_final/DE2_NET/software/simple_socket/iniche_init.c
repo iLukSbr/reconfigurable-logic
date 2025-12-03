@@ -45,6 +45,7 @@
 #include "../simple_socket_bsp/iniche/src/nios2/osport.h"
 #include "basic_io.h"
 #include "LCD.h"
+#include "led.h"
 #include "altera_avalon_pio_regs.h"
 /* Definition of task stack for the initial task which will initialize the NicheStack
  * TCP/IP Stack and then initialize the rest of the Simple Socket Server example tasks.

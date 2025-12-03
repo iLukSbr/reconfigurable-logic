@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaphore Command Processor</title>
+    <title>Processador de Comandos de Semáforos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -75,43 +75,78 @@
 </head>
 <body>
     <div class="container">
-        <h1>Semaphore Command Processor</h1>
+        <h1>Controle de Semáforos</h1>
         <form id="stringForm">
-            <h3>Semaphore 0</h3>
+            <h3>Semáforo 0</h3>
+            <h4>Digite o tempo dos sinais em segundos (máx 999)</h4>
             <div class="form-group">
-                <label for="inputTimeRed0">Digite o tempo do sinal vermelho em segundos:</label>
-                <input type="text" id="inputTimeRed0" name="inputTimeRed0" placeholder="Ex: 1" required>
+                <label for="inputTimeRed0">Sinal vermelho:</label>
+                <input type="number" id="inputTimeRed0" value="10" min="1" max="999" required>
             </div>
             <div class="form-group">
-                <label for="inputTimeYellow0">Digite o tempo do sinal amarelo em segundos:</label>
-                <input type="text" id="inputTimeYellow0" name="inputTimeYellow0" placeholder="Ex: 1" required>
+                <label for="inputTimeYellow0">Sinal amarelo:</label>
+                <input type="number" id="inputTimeYellow0" value="3" min="1" max="999" required>
             </div>
             <div class="form-group">
-                <label for="inputTimeGreen0">Digite o tempo do sinal verde em segundos:</label>
-                <input type="text" id="inputTimeGreen0" name="inputTimeGreen0" placeholder="Ex: 1" required>
+                <label for="inputTimeGreen0">Sinal verde:</label>
+                <input type="number" id="inputTimeGreen0" value="15" min="1" max="999" required>
             </div>
 
-            <h3>Semaphore 1</h3>
+            <h3>Semáforo 1</h3>
             <div class="form-group">
-                <label for="inputTimeRed1">Digite o tempo do sinal vermelho em segundos:</label>
-                <input type="text" id="inputTimeRed1" name="inputTimeRed1" placeholder="Ex: 1" required>
+                <label for="inputTimeRed1">Sinal vermelho:</label>
+                <input type="number" id="inputTimeRed1" value="15" min="1" max="999" required>
             </div>
             <div class="form-group">
-                <label for="inputTimeYellow1">Digite o tempo do sinal amarelo em segundos:</label>
-                <input type="text" id="inputTimeYellow1" name="inputTimeYellow1" placeholder="Ex: 1" required>
+                <label for="inputTimeYellow1">Sinal amarelo:</label>
+                <input type="number" id="inputTimeYellow1" value="3" min="1" max="999" required>
             </div>
             <div class="form-group">
-                <label for="inputTimeGreen1">Digite o tempo do sinal verde em segundos:</label>
-                <input type="text" id="inputTimeGreen1" name="inputTimeGreen1" placeholder="Ex: 1" required>
+                <label for="inputTimeGreen1">Sinal verde:</label>
+                <input type="number" id="inputTimeGreen1" value="10" min="1" max="999" required>
             </div>
             <div class="form-group">
                 <label for="initialStateSelector">Estado inicial (para ambos os semáforos):</label>
                 <select id="initialStateSelector" name="initialStateSelector" required>
-                    <option value="vermelho">Vermelho</option>
-                    <option value="amarelo">Amarelo</option>
-                    <option value="verde">Verde</option>
+                    <option value="vermelho">Vermelho (R)</option>
+                    <option value="amarelo">Amarelo (Y)</option>
+                    <option value="verde">Verde (G)</option>
                 </select>
             </div>
+            
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="dynamicTimesCheckbox" name="dynamicTimesCheckbox">
+                <label for="dynamicTimesCheckbox" style="margin-bottom: 0;">Ativar tempos dinâmicos</label>
+            </div>
+
+            <div class="dynamic-section disabled" id="dynamicSection">
+                <h3>Configurações de Tempos Dinâmicos</h3>
+                <p style="font-size: 14px; color: #666;">
+                    Os tempos serão ajustados automaticamente com base no tráfego detectado em cada via.
+                </p>
+                
+                <div class="form-group">
+                    <label for="trafficThreshold">Limite de tráfego pesado (veículos):</label>
+                    <input type="number" id="trafficThreshold" name="trafficThreshold" 
+                           placeholder="Ex: 10" min="1" max="100" value="10">
+                    <small style="color: #666;">Acima deste valor, o semáforo ajustará os tempos</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="adjustmentFactor">Fator de ajuste (%):</label>
+                    <input type="number" id="adjustmentFactor" name="adjustmentFactor" 
+                           placeholder="Ex: 20" min="5" max="100" value="20">
+                    <small style="color: #666;">Percentual de aumento no tempo verde quando detectar tráfego pesado</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="updateInterval">Intervalo de atualização (segundos):</label>
+                    <input type="number" id="updateInterval" name="updateInterval" 
+                           placeholder="Ex: 5" min="1" max="60" value="5">
+                    <small style="color: #666;">Frequência de verificação do tráfego</small>
+                </div>
+            </div>
+
             <button type="submit">Processar Comando</button>
         </form>
 
@@ -123,47 +158,95 @@
     </div>
 
     <script>
+        // Função para formatar número com 3 dígitos (preenchimento com zeros à esquerda)
+        function padNumber(num) {
+            return String(num).padStart(3, '0');
+        }
+
+        // Habilitar/desabilitar seção dinâmica
+        document.getElementById('dynamicTimesCheckbox').addEventListener('change', function() {
+            const dynamicSection = document.getElementById('dynamicSection');
+            if (this.checked) {
+                dynamicSection.classList.remove('disabled');
+            } else {
+                dynamicSection.classList.add('disabled');
+            }
+        });
+
+        // Simular contagem de tráfego (valores aleatórios para teste)
+        function simulateTraffic() {
+            return {
+                horizontal: Math.floor(Math.random() * 20),
+                vertical: Math.floor(Math.random() * 20)
+            };
+        }
+
+        //TODO: Implementar lógica de tempos dinâmicos
+        function calculateDynamicTimes(traffic) {
+            const threshold = Number.parseInt(document.getElementById('trafficThreshold').value);
+            const factor = Number.parseInt(document.getElementById('adjustmentFactor').value) / 100;
+            
+            const newTimes = structuredClone(baseTimes);
+            
+            // Ajustar semáforo 0 se tráfego horizontal estiver pesado
+            if (traffic.horizontal > threshold) {
+                newTimes.sem0.green = Math.min(999, Math.round(baseTimes.sem0.green * (1 + factor)));
+                newTimes.sem1.red = newTimes.sem0.green + newTimes.sem0.yellow;
+            }
+            
+            // Ajustar semáforo 1 se tráfego vertical estiver pesado
+            if (traffic.vertical > threshold) {
+                newTimes.sem1.green = Math.min(999, Math.round(baseTimes.sem1.green * (1 + factor)));
+                newTimes.sem0.red = newTimes.sem1.green + newTimes.sem1.yellow;
+            }
+            
+            return newTimes;
+        }
+
+        function buildCommandString(times) {
+            const initialState = document.getElementById('initialStateSelector').value;
+            return padNumber(times.sem0.red) +
+                   padNumber(times.sem0.yellow) +
+                   padNumber(times.sem0.green) +
+                   padNumber(times.sem1.red) +
+                   padNumber(times.sem1.yellow) +
+                   padNumber(times.sem1.green) +
+                   initialState;
+        }
+
         document.getElementById('stringForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const timeRed0    = Number.parseInt(document.getElementById('inputTimeRed0').value);
-            const timeYellow0 = Number.parseInt(document.getElementById('inputTimeYellow0').value);
-            const timeGreen0  = Number.parseInt(document.getElementById('inputTimeGreen0').value);
+            // Capturar tempos base
+            baseTimes.sem0.red = Number.parseInt(document.getElementById('inputTimeRed0').value);
+            baseTimes.sem0.yellow = Number.parseInt(document.getElementById('inputTimeYellow0').value);
+            baseTimes.sem0.green = Number.parseInt(document.getElementById('inputTimeGreen0').value);
+            baseTimes.sem1.red = Number.parseInt(document.getElementById('inputTimeRed1').value);
+            baseTimes.sem1.yellow = Number.parseInt(document.getElementById('inputTimeYellow1').value);
+            baseTimes.sem1.green = Number.parseInt(document.getElementById('inputTimeGreen1').value);
 
-            const timeRed1    = Number.parseInt(document.getElementById('inputTimeRed1').value);
-            const timeYellow1 = Number.parseInt(document.getElementById('inputTimeYellow1').value);
-            const timeGreen1  = Number.parseInt(document.getElementById('inputTimeGreen1').value);
-            const initialState = document.getElementById('initialStateSelector').value.toLowerCase();
-    
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
+
+            // Validação dos valores
+            if (baseTimes.sem0.red > 999 || baseTimes.sem0.yellow > 999 || baseTimes.sem0.green > 999 ||
+                baseTimes.sem1.red > 999 || baseTimes.sem1.yellow > 999 || baseTimes.sem1.green > 999) {
+                result.className = 'result error';
+                result.innerHTML = '<strong>Erro:</strong> Os tempos devem estar entre 0 e 999 segundos.';
+                result.style.display = 'block';
+                return;
+            }
 
             // Show loading
             loading.style.display = 'block';
             result.style.display = 'none';
 
-            // Initial to numeric code
-            let initCode = 0;
-            if (initialState === "vermelho") initCode = 0;
-            else if (initialState === "amarelo") initCode = 1;
-            else if (initialState === "verde") initCode = 2;
+            // Calcular novos tempos
+            const newTimes = calculateDynamicTimes(traffic);
+            const commandString = buildCommandString(newTimes);
 
-
-            // Build binary packet
-            const buffer = new ArrayBuffer(32);
-            const view = new DataView(buffer);
-
-            view.setUint32(0, timeRed0);
-            view.setUint32(4, timeYellow0);
-            view.setUint32(8, timeGreen0);            
-            // REG3 (control): bit0=START, bits 1-2 = initial state
-            const CONTROL = (1 << 0) | (initCode << 1);
-            view.setUint32(12, CONTROL);
-
-            view.setUint32(16, timeRed1);
-            view.setUint32(20, timeYellow1);
-            view.setUint32(24, timeGreen1);
-            view.setUint32(28, CONTROL);
+            // Enviar para NIOS
+            console.log('Enviando comando:', commandString);
 
             try {
                 // Get NIOS IP from Python server
@@ -176,8 +259,8 @@
 
                 const response = await fetch(`http://${niosIP}:80/cmd`, {
                     method: 'POST',
-                    headers: { "Content-Type": "application/octet-stream" },
-                    body: buffer
+                    headers: { "Content-Type": "text/plain" },
+                    body: commandString
                 });
                 
                 if (!response.ok) {
@@ -186,7 +269,7 @@
 
                 const text = await response.text();
                 result.className = "result success";
-                result.innerHTML = `<strong>Resposta do NIOS:</strong><br>${text}`;
+                result.innerHTML = `<strong>Resposta do NIOS:</strong><br>${text}<br><br><strong>Comando enviado:</strong> ${commandString}`;
                 result.style.display = 'block';
 
             } catch (error) {

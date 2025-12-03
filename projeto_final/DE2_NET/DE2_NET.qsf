@@ -550,14 +550,3 @@ set_global_assignment -name VERILOG_FILE I2C_AV_Config.v
 set_global_assignment -name VERILOG_FILE I2C_Controller.v
 set_global_assignment -name QIP_FILE SDRAM_PLL.qip
 set_global_assignment -name QIP_FILE Audio_PLL.qip
-set_global_assignment -name VHDL_FILE sinaleiro/and_4.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/and_5.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/and_9.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/bcd_7seg.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/btn_controller.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/counter.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/counter4b.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/divisor.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/semaforo.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/sinaleiro.vhd
-set_global_assignment -name VHDL_FILE sinaleiro/timer.vhd

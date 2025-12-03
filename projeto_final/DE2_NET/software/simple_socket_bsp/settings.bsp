@@ -2,9 +2,9 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>ucosii</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>19/11/2025 15:04:07</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1763571847158</BspGeneratedUnixTimeStamp>
-        <BspGeneratedLocation>C:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET\software\simple_socket_bsp</BspGeneratedLocation>
+        <BspGeneratedTimeStamp>03/12/2025 12:37:39</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1764772659296</BspGeneratedUnixTimeStamp>
+        <BspGeneratedLocation>C:\altera\13.0sp1\reconfigurable-logic\projeto_final\DE2_NET\software\simple_socket_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\system_0.sopcinfo</SopcDesignFile>
         <JdiFile>default</JdiFile>
