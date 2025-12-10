@@ -2,31 +2,35 @@
 * Copyright (c) 2006 Altera Corporation, San Jose, California, USA.           *
 * All rights reserved. All use of this software and documentation is          *
 * subject to the License Agreement located at the end of this file below.     *
-*******************************************************************************
-* Date - October 24, 2006                                                     *
-* Module - simple_socket_server.c                                             *
-*                                                                             *
-******************************************************************************/
- 
+ *******************************************************************************
+ * Date - October 24, 2006                                                     *
+ * Module - simple_socket_server.c                                             *
+ *                                                                             *
+ ******************************************************************************/
+  
 /******************************************************************************
- * Simple Socket Server (SSS) example. 
- * 
- * This example demonstrates the use of MicroC/OS-II running on NIOS II.       
- * In addition it is to serve as a good starting point for designs using       
- * MicroC/OS-II and Altera NicheStack TCP/IP Stack - NIOS II Edition.                                          
- *                                                                             
- * -Known Issues                                                             
- *     None.   
- *      
- * Please refer to the Altera NicheStack Tutorial documentation for details on this 
- * software example, as well as details on how to configure the NicheStack TCP/IP 
- * networking stack and MicroC/OS-II Real-Time Operating System.  
- */
- 
+  * Simple Socket Server (SSS) example. 
+  * 
+  * This example demonstrates the use of MicroC/OS-II running on NIOS II.       
+  * In addition it is to serve as a good starting point for designs using       
+  * MicroC/OS-II and Altera NicheStack TCP/IP Stack - NIOS II Edition.                                          
+  *                                                                             
+  * -Known Issues                                                             
+  *     None.   
+  *      
+  * Please refer to the Altera NicheStack Tutorial documentation for details on this 
+  * software example, as well as details on how to configure the NicheStack TCP/IP 
+  * networking stack and MicroC/OS-II Real-Time Operating System.  
+  */
+  
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+
+/* Forward declarations for network functions to avoid implicit declaration warnings */
+int inet_pton(int af, const char *src, void *dst);
+int shutdown(int sockfd, int how);
 
 /* MicroC/OS-II definitions */
 #include "includes.h"
@@ -43,9 +47,8 @@
 //#include "BASICTYP.h"
 #include "system.h"
 #include "basic_io.h"
-#include <sys/socket.h>
 
-#include "led.h"
+#include "semaforo.h"
 
 #define IPPROTO_TCP 6
 
@@ -97,6 +100,7 @@ OS_STK    LEDManagementTaskStk[TASK_STACKSIZE];
 OS_STK    LED7SegLightshowTaskStk[TASK_STACKSIZE];
 OS_STK    SSSRXTaskStk[TASK_STACKSIZE];
 OS_STK    SSSTXTaskStk[TASK_STACKSIZE];
+OS_STK    semaphore_task_stack[TASK_STACKSIZE];
 
 /* Global connection structure shared between RX and TX tasks */
 static SSSConn g_conn;
@@ -170,34 +174,19 @@ void SSSCreateTasks(void)
    // RX and TX tasks are now created with TK_NEWTASK in iniche_init.c
    printf("Creating non-socket tasks...\n");
 
-   error_code = OSTaskCreateExt(LED7SegLightshowTask,
+   error_code = OSTaskCreateExt((void (*)(void *))semaphore_task,
                              NULL,
-                             (void *)&LED7SegLightshowTaskStk[TASK_STACKSIZE-1],
-                             LED_7SEG_LIGHTSHOW_TASK_PRIORITY,
-                             LED_7SEG_LIGHTSHOW_TASK_PRIORITY,
-                             LED7SegLightshowTaskStk,
+                             (void *)&semaphore_task_stack[TASK_STACKSIZE-1],
+                             SEMAPHORE_TASK_PRIORITY,
+                             SEMAPHORE_TASK_PRIORITY,
+                             semaphore_task_stack,
                              TASK_STACKSIZE,
                              NULL,
                              0);
 
    alt_uCOSIIErrorHandler(error_code, 0);
 
-   printf("LED7SegLightshowTask created.\n");
-
-   error_code = OSTaskCreateExt(LEDManagementTask,
-                              NULL,
-                              (void *)&LEDManagementTaskStk[TASK_STACKSIZE-1],
-                              LED_MANAGEMENT_TASK_PRIORITY,
-                              LED_MANAGEMENT_TASK_PRIORITY,
-                              LEDManagementTaskStk,
-                              TASK_STACKSIZE,
-                              NULL,
-                              0);
-
-   alt_uCOSIIErrorHandler(error_code, 0);
-
-   printf("LEDManagementTask created.\n");
-
+   printf("semaphore_task created.\n");
 }
 
 
@@ -308,19 +297,19 @@ void sss_handle_accept(int listen_socket, SSSConn* conn)
  */
 void sss_exec_command(SSSConn* conn)
 {
-   int bytes_to_process = conn->rx_wr_pos - conn->rx_rd_pos;
+  //  int bytes_to_process = conn->rx_wr_pos - conn->rx_rd_pos;
    INT8U tx_buf[SSS_TX_BUF_SIZE];
    INT8U *tx_wr_pos = tx_buf;
    char *body_start = NULL;
    char *content_length_str = NULL;
    int content_length = 0;
    char *data_start = NULL;
-   int i;
+  //  int i;
 
    printf("[sss_exec_command] executing command on RX data\n");
 
    /* OPTIONS handling (CORS) */
-   if (strstr((char*)conn->rx_buffer, "OPTIONS") == conn->rx_buffer) {
+   if (strstr((char*)conn->rx_buffer, "OPTIONS") == (char*)conn->rx_buffer) {
        tx_wr_pos += sprintf((char*)tx_wr_pos,
            "HTTP/1.1 204 No Content\r\n"
            "Access-Control-Allow-Origin: *\r\n"
@@ -359,42 +348,7 @@ void sss_exec_command(SSSConn* conn)
          unsigned char *in = (unsigned char*)data_start;
 
          while (in_idx < content_length && out_len < (int)sizeof(out_buf)) {
-             unsigned int b = in[in_idx];
-
-             /* Detecta sequência UTF-8 de 2 bytes para U+00XX (0xC2/0xC3 ...) */
-             if ((b == 0xC2 || b == 0xC3) && (in_idx + 1 < content_length)) {
-                 unsigned int b2 = in[in_idx + 1];
-                 if ((b2 & 0xC0) == 0x80) {
-                     unsigned int codepoint = ((b & 0x1F) << 6) | (b2 & 0x3F); /* U+00XX */
-                     unsigned char mapped = (unsigned char)(codepoint & 0xFF);
-                     printf("[sss_exec_command] decoded UTF-8 0x%02X 0x%02X -> U+%04X -> 0x%02X\n",
-                            (unsigned int)b, (unsigned int)b2, codepoint, (unsigned int)mapped);
-                     b = mapped;
-                     in_idx += 2;
-                 } else {
-                     /* sequência inválida: trate o byte atual como-is */
-                     in_idx++;
-                 }
-             } else {
-                 /* byte único (já Latin-1 ou octet stream) */
-                 in_idx++;
-             }
-
-             /* Agora 'b' é um único byte (Latin-1). Aplicar processamento. */
-             if (b == 0xF7) {
-                 out_buf[out_len++] = '0';
-                 printf("[sss_exec_command] converted 0x%02X to '0'\n", (unsigned int)0xF7);
-             } else {
-                 unsigned char newc = (unsigned char)(b + 1);
-                 if (b >= 0x20 && b <= 0x7E) {
-                     printf("[sss_exec_command] incremented ASCII character '%c' (0x%02X) to '%c' (0x%02X)\n",
-                            (unsigned int)b, (unsigned int)b, (unsigned int)newc, (unsigned int)newc);
-                 } else {
-                     printf("[sss_exec_command] incremented byte 0x%02X to 0x%02X\n",
-                            (unsigned int)b, (unsigned int)newc);
-                 }
-                 out_buf[out_len++] = newc;
-             }
+            
          } /* while */
 
          printf("[sss_exec_command] processed data length: %d\n", out_len);
@@ -560,7 +514,7 @@ void SSSSimpleSocketServerTask()
 
 		sa.sin_family = AF_INET;
 		sa.sin_port = htons(30);
-		sprintf(ip_str, "%s.%s.%s.%s", GWADDR0, GWADDR1, GWADDR2, GWADDR3);
+		sprintf(ip_str, "%d.%d.%d.%d", GWADDR0, GWADDR1, GWADDR2, GWADDR3);
 		res = inet_pton(AF_INET, ip_str, &sa.sin_addr);
 
 		if (connect(SocketFD, (struct sockaddr *)&sa, sizeof sa) == -1) {
@@ -706,7 +660,7 @@ void SSSRXTask()
 	int fd_listen, max_socket;
 	struct sockaddr_in addr;
 	fd_set readfds;
-	int err;
+	INT8U err;
 
 	/*
 	* Sockets primer...
@@ -755,7 +709,7 @@ void SSSRXTask()
 		max_socket = fd_listen+1;
 
 		/* Check if we have an active connection */
-		OSSemPend(g_conn_sem, 0, &err);
+		OSSemPend(g_conn_sem, 0, (INT8U*)&err);
 		if (g_conn.fd != -1)
 		{
 			FD_SET(g_conn.fd, &readfds);
@@ -776,7 +730,7 @@ void SSSRXTask()
 		/* Handle incoming data */
 		else
 		{
-			OSSemPend(g_conn_sem, 0, &err);
+			OSSemPend(g_conn_sem, 0, (INT8U*)&err);
 			if ((g_conn.fd != -1) && FD_ISSET(g_conn.fd, &readfds))
 			{
 				sss_handle_receive(&g_conn);
@@ -794,13 +748,13 @@ void SSSRXTask()
  */
 void SSSTXTask()
 {
-	int err;
+	INT8U err;
 	printf("[sss_tx_task] TX Task started\n");
 
 	while(1)
 	{
 		/* Check if there's data to process and send */
-		OSSemPend(g_conn_sem, 0, &err);
+		OSSemPend(g_conn_sem, 0, (INT8U*)&err);
 		if (g_conn.state == COMPLETE)
 		{
 			sss_exec_command(&g_conn);
@@ -823,33 +777,38 @@ void SSSTXTask()
 
 
 
+
+
 /******************************************************************************
-*                                                                             *
-* License Agreement                                                           *
-*                                                                             *
-* Copyright (c) 2009 Altera Corporation, San Jose, California, USA.           *
-* All rights reserved.                                                        *
-*                                                                             *
-* Permission is hereby granted, free of charge, to any person obtaining a     *
-* copy of this software and associated documentation files (the "Software"),  *
-* to deal in the Software without restriction, including without limitation   *
-* the rights to use, copy, modify, merge, publish, distribute, sublicense,    *
-* and/or sell copies of the Software, and to permit persons to whom the       *
-* Software is furnished to do so, subject to the following conditions:        *
-*                                                                             *
-* The above copyright notice and this permission notice shall be included in  *
-* all copies or substantial portions of the Software.                         *
-*                                                                             *
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  *
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,    *
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE *
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER      *
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING     *
-* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         *
-* DEALINGS IN THE SOFTWARE.                                                   *
-*                                                                             *
-* This agreement shall be governed in all respects by the laws of the State   *
-* of California and by the laws of the United States of America.              *
-* Altera does not recommend, suggest or require that this reference design    *
-* file be used in conjunction or combination with any other product.          *
-******************************************************************************/
+ *                                                                             *
+
+/ *******************************************************************************
+ *                                                                             *
+ * License Agreement                                                           *
+ *                                                                             *
+ * Copyright (c) 2009 Altera Corporation, San Jose, California, USA.           *
+ * All rights reserved.                                                        *
+ *                                                                             *
+ * Permission is hereby granted, free of charge, to any person obtaining a     *
+ * copy of this software and associated documentation files (the "Software"),  *
+ * to deal in the Software without restriction, including without limitation   *
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,    *
+ * and/or sell copies of the Software, and to permit persons to whom the       *
+ * Software is furnished to do so, subject to the following conditions:        *
+ *                                                                             *
+ * The above copyright notice and this permission notice shall be included in  *
+ * all copies or substantial portions of the Software.                         *
+ *                                                                             *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,    *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE *
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER      *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING     *
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER         *
+ * DEALINGS IN THE SOFTWARE.                                                   *
+ *                                                                             *
+ * This agreement shall be governed in all respects by the laws of the State   *
+ * of California and by the laws of the United States of America.              *
+ * Altera does not recommend, suggest or require that this reference design    *
+ * file be used in conjunction or combination with any other product.          *
+ ******************************************************************************/

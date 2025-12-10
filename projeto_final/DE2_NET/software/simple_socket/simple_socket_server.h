@@ -97,6 +97,7 @@ void SSSCreateTasks();
 #define SSS_RX_TASK_PRIORITY                    8
 #define SSS_TX_TASK_PRIORITY                    9
 #define SSS_INITIAL_TASK_PRIORITY               5
+#define SEMAPHORE_TASK_PRIORITY                 18
 
 /* 
  * The IP, gateway, and subnet mask address below are used as a last resort
@@ -207,6 +208,8 @@ extern OS_FLAG_GRP *SSSLEDEventFlag;
  * lightshow command over the TCPIP socket.
  */
 extern OS_EVENT *SSSLEDLightshowSem;
+
+void sss_reset_connection(SSSConn* conn);
 
 #endif /* __SIMPLE_SOCKET_SERVER_H__ */
 

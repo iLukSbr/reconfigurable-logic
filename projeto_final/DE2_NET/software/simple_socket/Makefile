@@ -152,6 +152,8 @@ C_SRCS += SSS_DE2_115.c
 C_SRCS += dm9000a.c
 C_SRCS += LCD.c
 C_SRCS += seg7display.c
+C_SRCS += semaforo.c
+C_SRCS += seg7display.c
 CXX_SRCS :=
 ASM_SRCS :=
 

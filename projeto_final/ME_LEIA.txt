@@ -16,7 +16,7 @@ Há um seletor para escolher qual a cor inicial do semáforo 0 apenas.
 Há um quadradinho de marcar/desmarcar se quer ativar tempos dinâmicos.
 
 O cliente envia uma string no formato "RRRYYYGGGRRRYYYGGGI":
-A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, a segunda parte RRRYYYGGG (9 chars) representa os tempos do semáforo 1 e a última parte I representa o estado inicial.
+A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, a segunda parte RRRYYYGGG (9 chars) representa os tempos do semáforo 1 e a última parte I representa o estado inicial do semáforo 0.
 RRR tempo em segundos para o sinal vermelho;
 YYY tempo em segundos para o sinal amarelo;
 GGG tempo em segundos para o sinal verde.
@@ -47,6 +47,7 @@ COMO RODAR:
 2 Descompacte .zip para obter a pasta interna DE2_NET. Este projeto deve estar na pasta da altera, por exemplo: C:\altera\13.0sp1\reconfigurable-logic\nios_ethernet\DE2_NET
 3 Abra o DE2_NET.qpf
 4 Vá na aba Files do Project Navigator e delete o arquivo system_0/synthesis/system_0.qip
+4.1 Compile o projeto no Quartus.
 5 Abre o Qsys em Tools->Qsys
 6 Selecione o arquivo system_0.qsys e clique em Abrir
 7 De OK ou Close no que aparecer
