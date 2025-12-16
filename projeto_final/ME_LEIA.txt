@@ -20,7 +20,7 @@ A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, a segu
 RRR tempo em segundos para o sinal vermelho;
 YYY tempo em segundos para o sinal amarelo;
 GGG tempo em segundos para o sinal verde.
-I estado inicial para os dois semáforos.
+I estado inicial para o semáforo 0.
 O servidor NIOS II processa essa string e ajusta os tempos dos semáforos de acordo.
 O servidor responde com a string "OK" se os tempos forem configurados corretamente ou "ERROR" se houver algum problema na configuração.
 A mensagem é reenviada até receber "OK".

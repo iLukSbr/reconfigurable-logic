@@ -369,7 +369,7 @@
             <form id="stringForm">
                 <div class="semaphore-config">
                     <div class="semaphore-group">
-                        <h3>Semáforo 0 (Sul)</h3>
+                        <h3>Semáforo 0 (Vertical)</h3>
                         <div class="form-group">
                             <label for="inputTimeRed0">🔴 Tempo Vermelho (s):</label>
                             <input type="number" id="inputTimeRed0" value="10" min="1" max="999" required>
@@ -385,7 +385,7 @@
                     </div>
 
                     <div class="semaphore-group">
-                        <h3>Semáforo 1 (Oeste)</h3>
+                        <h3>Semáforo 1 (Horizontal)</h3>
                         <div class="form-group">
                             <label for="inputTimeRed1">🔴 Tempo Vermelho (s):</label>
                             <input type="number" id="inputTimeRed1" value="15" min="1" max="999" required>
@@ -425,10 +425,10 @@
         </div>
 
         <div id="sim" data-light="0" data-state="normal" data-yellow="false">
-            <span id="light-1" title="Semáforo 0 (Sul)"></span>
-            <span id="light-2" title="Semáforo 1 (Oeste)"></span>
-            <div id="lane-1" title="Via Sul"></div>
-            <div id="lane-2" title="Via Oeste"></div>
+            <span id="light-1" title="Semáforo 0 (Vertical)"></span>
+            <span id="light-2" title="Semáforo 1 (Horizontal)"></span>
+            <div id="lane-1" title="Via Vertical"></div>
+            <div id="lane-2" title="Via Horizontal"></div>
             <div id="intersection" title="Interseção"></div>
         </div>
 
@@ -436,11 +436,11 @@
             <h3>📊 Status da Simulação</h3>
             <div class="status-grid">
                 <div class="status-item">
-                    <h4>🚗 Veículos Via Sul</h4>
+                    <h4>🚗 Veículos Via Vertical</h4>
                     <div class="status-value" id="countSouth">0</div>
                 </div>
                 <div class="status-item">
-                    <h4>🚙 Veículos Via Oeste</h4>
+                    <h4>🚙 Veículos Via Horizontal</h4>
                     <div class="status-value" id="countWest">0</div>
                 </div>
             </div>
@@ -776,7 +776,7 @@
             const initialState = document.getElementById('initialStateSelector').value;
             
             // Define qual semáforo começa verde baseado no estado inicial
-            // R, Y, G = Semáforo 0 (Sul) começa ativo
+            // R, Y, G = Semáforo 0 (Vertical) começa ativo
             if (initialState === 'R' || initialState === 'Y' || initialState === 'G') {
                 config.light = 1;
                 sLight1.permits = 1;
