@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Semáforos NIOS II</title>
     <style>
-        /* ===== ESTILOS GERAIS ===== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -29,7 +28,6 @@
             margin-bottom: 30px;
         }
 
-        /* ===== FORMULÁRIO ===== */
         .control-panel {
             background: white;
             padding: 30px;
@@ -76,46 +74,6 @@
             border-color: #4800ff;
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-        }
-
-        .checkbox-group label {
-            margin: 0;
-        }
-
-        .dynamic-section {
-            background: #f8f8f8;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 15px;
-        }
-
-        .dynamic-section.disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .dynamic-section h3 {
-            color: #666;
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        small {
-            display: block;
-            color: #666;
-            font-size: 12px;
-            margin-top: 3px;
-        }
-
-        /* ===== BOTÕES ===== */
         .button-group {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -165,7 +123,6 @@
             background-color: #dd0000;
         }
 
-        /* ===== MENSAGENS ===== */
         .result {
             margin-top: 20px;
             padding: 15px;
@@ -193,24 +150,22 @@
             font-weight: bold;
         }
 
-        /* ===== SIMULAÇÃO (do projeto original) ===== */
         #sim {
             width: 640px;
             height: 360px;
-
             display: block;
             position: relative;
             background: black;
             border: 2px solid black;
             margin: 10px auto;
             overflow: hidden;
-            }
+        }
 
-            #sim > * {
+        #sim > * {
             position: absolute;
-            }
+        }
 
-            #light-1, #light-2 {
+        #light-1, #light-2 {
             display: inline-block;
             width: 50px;
             height: 50px;
@@ -218,61 +173,61 @@
             background-color: red;
             background-image: url(images/traffic-lights.svg);
             border: 3px solid transparent;
-            }
-            #sim[data-ctrl-queued="true"] #light-1, #sim[data-ctrl-queued="true"] #light-2 {
-            border-color: yellow;
-            }
-            #sim[data-light="0"] #light-1, #sim[data-light="0"] #light-2 {
-            background-color: gray !important;
-            }
-            #sim[data-light="1"] #light-1 {
-            background-color: green;
-            }
-            #sim[data-light="2"] #light-2 {
-            background-color: green;
-            }
+        }
 
-            #light-1 {
+        #sim[data-light="0"] #light-1, #sim[data-light="0"] #light-2 {
+            background-color: gray !important;
+        }
+
+        #sim[data-light="1"] #light-1 {
+            background-color: green;
+        }
+
+        #sim[data-light="2"] #light-2 {
+            background-color: green;
+        }
+
+        #light-1 {
             top: 75px;
             left: 120px;
-            }
-            #light-2 {
+        }
+
+        #light-2 {
             top: 180px;
             right: 240px;
-            }
+        }
 
-            #intersection, #lane-1, #lane-2 {
+        #intersection, #lane-1, #lane-2 {
             background: white;
-            }
+        }
 
-            #lane-1 {
+        #lane-1 {
             left: 180px;
             width: 50px;
             height: 100%;
-            }
+        }
 
-            #lane-2 {
+        #lane-2 {
             bottom: 70px;
             height: 50px;
             width: 100%;
-            }
+        }
 
-            #intersection {
+        #intersection {
             border-radius: 50%;
             width: 110px;
             height: 110px;
             top: 205px;
             left: 150px;
-
             display: grid;
             place-items: center center;
-            }
-            #sim[data-state="error"] #intersection {
-            background: radial-gradient(red, transparent);
-            }
+        }
 
-            .vehicle {
-            /* Resetado por JavaScript */
+        #sim[data-state="error"] #intersection {
+            background: radial-gradient(red, transparent);
+        }
+
+        .vehicle {
             --color: black;
             --pos: 10;
             
@@ -284,82 +239,66 @@
             background-color: var(--color);
             background-position: center;
             background-repeat: no-repeat;
-
             will-change: transform;
             transition: transform 0.3s;
-            transform:
-                translate(
+            transform: translate(
                 calc((var(--pos) + 1.5) * var(--delta-x) * 1px),
                 calc((var(--pos) + 1.5) * var(--delta-y) * 1px)
-                )
+            ) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z));
+        }
 
-                rotateY(var(--rotate-y))
-                rotateZ(var(--rotate-z));
-            }
-            .vehicle.car { background-image: url(images/city-car.svg); }
-            .vehicle.truck { background-image: url(images/truck.svg); }
+        .vehicle.car { 
+            background-image: url(images/city-car.svg); 
+        }
 
-            #sim[data-state="error"] .vehicle[data-state="leaving"] {
-            --pos: -1.5 !important; /* final position = 0 = -1.5 + 1.5 */
+        .vehicle.truck { 
+            background-image: url(images/truck.svg); 
+        }
+
+        #sim[data-state="error"] .vehicle[data-state="leaving"] {
+            --pos: -1.5 !important;
             position: static;
             animation: none;
-            }
+        }
 
-            .vehicle.west {
+        .vehicle.west {
             --rotate-y: 180deg;
             --rotate-z: 0deg;
-
             --delta-x: 50;
             --delta-y: 0;
-            }
+        }
 
-            .vehicle.south {
+        .vehicle.south {
             --rotate-y: 0deg;
             --rotate-z: 90deg;
-
             --delta-x: 0;
             --delta-y: -50;
-            }
+        }
 
-            .vehicle[data-state="leaving"] {
+        .vehicle[data-state="leaving"] {
             animation: 1.5s vehicle-leave ease-in forwards;
-            }
+        }
 
-            @keyframes vehicle-leave {
+        @keyframes vehicle-leave {
             0% {
                 opacity: 1;
-
-                transform:
-                translate(
+                transform: translate(
                     calc((var(--pos) + 1.5) * var(--delta-x) * 1px),
                     calc((var(--pos) + 1.5) * var(--delta-y) * 1px)
-                )
-
-                rotateY(var(--rotate-y))
-                rotateZ(var(--rotate-z));
+                ) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z));
             }
-
             75% {
                 opacity: 1;
             }
-            
             100% {
                 opacity: 0;
-
-                transform:
-                translate(
+                transform: translate(
                     calc(var(--delta-x) * -2.5px),
                     calc(var(--delta-y) * -1.5px)
-                )
-
-                rotateY(var(--rotate-y))
-                rotateZ(var(--rotate-z));
+                ) rotateY(var(--rotate-y)) rotateZ(var(--rotate-z));
             }
+        }
 
-            }
-
-
-        /* ===== STATUS ===== */
         .status-panel {
             background: white;
             padding: 20px;
@@ -392,6 +331,14 @@
             color: #333;
         }
 
+        .reference-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
         @media (max-width: 768px) {
             .semaphore-config {
                 grid-template-columns: 1fr;
@@ -403,14 +350,6 @@
                 width: 100%;
                 height: 300px;
             }
-        }
-
-        .reference-panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -463,36 +402,6 @@
                     </select>
                 </div>
 
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="dynamicTimesCheckbox">
-                    <label for="dynamicTimesCheckbox">⚡ Ativar tempos dinâmicos (ajuste automático baseado no tráfego)</label>
-                </div>
-
-                <div class="dynamic-section disabled" id="dynamicSection">
-                    <h3>Configurações de Tempos Dinâmicos</h3>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
-                        Os tempos serão ajustados automaticamente com base no tráfego detectado.
-                    </p>
-                    
-                    <div class="form-group">
-                        <label for="trafficThreshold">Limite de tráfego pesado (veículos):</label>
-                        <input type="number" id="trafficThreshold" placeholder="Ex: 10" min="1" max="100" value="10">
-                        <small>Acima deste valor, o semáforo ajustará os tempos</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="adjustmentFactor">Fator de ajuste (%):</label>
-                        <input type="number" id="adjustmentFactor" placeholder="Ex: 20" min="5" max="100" value="20">
-                        <small>Percentual de aumento no tempo verde quando detectar tráfego pesado</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="updateInterval">Intervalo de atualização (s):</label>
-                        <input type="number" id="updateInterval" placeholder="Ex: 5" min="1" max="60" value="5">
-                        <small>Frequência de verificação do tráfego</small>
-                    </div>
-                </div>
-
                 <div class="button-group">
                     <button type="submit" class="btn-process">Enviar para NIOS</button>
                     <button type="button" id="btnStart" class="btn-start">▶️ Iniciar Simulação</button>
@@ -532,31 +441,65 @@
         <div class="reference-panel">
             <section>
                 <h3>Referências</h3>
-                <p>Ícones de 'City car', 'Truck' e 'Traffic lights' por <a href="http://delapouite.com">Delapouite</a></li>
-                <p>O <a href="https://github.com/djalilhebal/softvis-traffic-semaphores"> código</a> de @djalilhebal inspirou a parte do simulador deste projeto.</li>
+                <p>Ícones de 'City car', 'Truck' e 'Traffic lights' por <a href="http://delapouite.com">Delapouite</a></p>
+                <p>O <a href="https://github.com/djalilhebal/softvis-traffic-semaphores">código</a> de @djalilhebal inspirou a parte do simulador deste projeto.</p>
             </section>
         </div>
     </div>
 
     <script>
+        // ===== SEMÁFORO SIMPLIFICADO =====
+        class SimpleSemaphore {
+            constructor(permits) {
+                this.permits = permits;
+                this.queue = [];
+            }
+
+            async acquire(acquirer) {
+                return new Promise((resolve) => {
+                    this.queue.push({ acquirer, resolve });
+                    this.maybeNotify();
+                });
+            }
+
+            release() {
+                this.permits++;
+                this.maybeNotify();
+            }
+
+            maybeNotify() {
+                if (this.permits > 0 && this.queue.length > 0) {
+                    const entry = this.queue.shift();
+                    this.permits--;
+                    entry.resolve();
+                }
+            }
+
+            reset() {
+                this.queue = [];
+            }
+        }
+
         // ===== CONFIGURAÇÃO GLOBAL =====
         const config = {
             baseTimes: {
                 sem0: { red: 10, yellow: 3, green: 15 },
                 sem1: { red: 15, yellow: 3, green: 10 }
             },
-            currentLight: 1,
             running: false,
-            dynamicEnabled: false,
-            niosConnected: false
+            light: 1
         };
+
+        // ===== SEMÁFOROS DE CONTROLE =====
+        const sLight1 = new SimpleSemaphore(1);
+        const sLight2 = new SimpleSemaphore(0);
+        const sEmpty1 = new SimpleSemaphore(1);
+        const sEmpty2 = new SimpleSemaphore(1);
 
         // ===== ELEMENTOS DOM =====
         const ui = {
             btnStart: document.getElementById('btnStart'),
             btnStop: document.getElementById('btnStop'),
-            light1: document.getElementById('light-1'),
-            light2: document.getElementById('light-2'),
             sim: document.getElementById('sim'),
             intersection: document.getElementById('intersection'),
             countSouth: document.getElementById('countSouth'),
@@ -571,6 +514,7 @@
         let crossing = 0;
         let vehicleCounter = 0;
         let creatorInterval = null;
+        let controllerRunning = false;
         let freeColors = ['blue', 'coral', 'darkkhaki', 'firebrick', 'yellowgreen', 
                           'gray', 'skyblue', 'teal', 'orange', 'pink', 'purple', 'yellow'];
 
@@ -589,6 +533,11 @@
             ui.result.style.display = 'block';
         }
 
+        function updateCounts() {
+            ui.countSouth.textContent = lane1.length;
+            ui.countWest.textContent = lane2.length;
+        }
+
         // ===== CLASSE VEÍCULO =====
         class Vehicle {
             constructor(lane, direction) {
@@ -596,7 +545,6 @@
                 this.lane = lane;
                 this.direction = direction;
                 this.color = freeColors.shift() || 'black';
-                this.canGo = false;
                 this.type = Math.random() < 0.25 ? 'truck' : 'car';
                 this.element = this.createElement();
             }
@@ -611,16 +559,35 @@
                 return el;
             }
 
-            async tryPass() {
-                while (!this.canGo && config.running) {
-                    await sleep(0.1);
+            async run() {
+                try {
+                    if (this.lane === 1) {
+                        await sEmpty1.acquire(this);
+                        await sLight1.acquire(this);
+                        await this.traverse();
+                        sLight1.release();
+                        sEmpty1.release();
+                    } else {
+                        await sEmpty2.acquire(this);
+                        await sLight2.acquire(this);
+                        await this.traverse();
+                        sLight2.release();
+                        sEmpty2.release();
+                    }
+                } catch (error) {
+                    console.error('Erro no veículo:', error);
                 }
-
-                if (!config.running) return;
-                await this.traverse();
             }
 
             async traverse() {
+                if (!config.running) return;
+                
+                await sleep(Math.random() * 0.5);
+                await this.enterIntersection();
+                await this.leaveIntersection();
+            }
+
+            async enterIntersection() {
                 crossing++;
                 this.element.dataset.state = 'leaving';
                 
@@ -630,9 +597,17 @@
                     stop();
                     return;
                 }
-
-                await sleep(1.5);
                 
+                await sleep(0.5);
+            }
+
+            async leaveIntersection() {
+                await sleep(1);
+                this.destroy();
+                crossing--;
+            }
+
+            destroy() {
                 this.element.remove();
                 freeColors.push(this.color);
                 const targetLane = this.lane === 1 ? lane1 : lane2;
@@ -640,35 +615,53 @@
                 if (index > -1) {
                     targetLane.splice(index, 1);
                 }
-                crossing--;
                 updateCounts();
             }
         }
 
-        // ===== FUNÇÕES DA SIMULAÇÃO =====
-        function updateLights(light, state) {
-            ui.sim.dataset.light = light;
+        // ===== CONTROLADOR DE SEMÁFOROS =====
+        async function trafficController() {
+            controllerRunning = true;
+            
+            while (config.running && controllerRunning) {
+                const interval = config.light === 1 ? 
+                    config.baseTimes.sem0.green : 
+                    config.baseTimes.sem1.green;
+                
+                await sleep(interval);
+                
+                if (!config.running) break;
+                
+                if (config.light === 1) {
+                    await sLight1.acquire('controller');
+                    config.light = 2;
+                    ui.sim.dataset.light = 2;
+                    sLight2.release();
+                } else {
+                    await sLight2.acquire('controller');
+                    config.light = 1;
+                    ui.sim.dataset.light = 1;
+                    sLight1.release();
+                }
+            }
         }
 
+        // ===== CRIAÇÃO DE VEÍCULOS =====
         function maybeCreateVehicle() {
+            if (!config.running) return;
             if (Math.random() < 0.5) return;
 
             if (Math.random() < 0.5 && lane1.length < 4) {
                 const vehicle = new Vehicle(1, 'south');
                 lane1.push(vehicle);
-                vehicle.tryPass();
+                vehicle.run();
             } else if (lane2.length < 7) {
                 const vehicle = new Vehicle(2, 'west');
                 lane2.push(vehicle);
-                vehicle.tryPass();
+                vehicle.run();
             }
 
             updateCounts();
-        }
-
-        function updateCounts() {
-            ui.countSouth.textContent = lane1.length;
-            ui.countWest.textContent = lane2.length;
         }
 
         function redraw() {
@@ -678,26 +671,6 @@
             lane2.forEach((v, i) => v.element.style.setProperty('--pos', i));
 
             requestAnimationFrame(redraw);
-        }
-
-        // ===== CONTROLADOR DE SEMÁFOROS =====
-        async function trafficController() {
-            while (config.running) {
-                const currentSem = config.currentLight === 1 ? config.baseTimes.sem0 : config.baseTimes.sem1;
-                const currentLane = config.currentLight === 1 ? lane1 : lane2;
-
-                // Verde
-                updateLights(config.currentLight, 'green');
-                currentLane.forEach(v => v.canGo = true);
-                await sleep(currentSem.green);
-
-                // Amarelo
-                currentLane.forEach(v => v.canGo = false);
-                await sleep(currentSem.yellow);
-
-                // Vermelho e troca
-                config.currentLight = config.currentLight === 1 ? 2 : 1;
-            }
         }
 
         // ===== COMUNICAÇÃO COM NIOS II =====
@@ -732,11 +705,9 @@
                 }
 
                 const text = await response.text();
-                config.niosConnected = true;
                 return { success: true, response: text };
 
             } catch (error) {
-                config.niosConnected = false;
                 return { success: false, error: error.message };
             }
         }
@@ -751,12 +722,16 @@
             config.baseTimes.sem1.green = Number(document.getElementById('inputTimeGreen1').value);
             
             const initialState = document.getElementById('initialStateSelector').value;
-            config.currentLight = initialState === 'R' || initialState === 'G' ? 1 : 2;
+            config.light = initialState === 'R' || initialState === 'G' ? 1 : 2;
+            
+            sLight1.permits = config.light === 1 ? 1 : 0;
+            sLight2.permits = config.light === 2 ? 1 : 0;
 
             config.running = true;
             ui.btnStart.disabled = true;
             ui.btnStop.disabled = false;
             ui.sim.dataset.state = 'normal';
+            ui.sim.dataset.light = config.light;
 
             creatorInterval = setInterval(maybeCreateVehicle, 1000);
             trafficController();
@@ -767,10 +742,16 @@
 
         function stop() {
             config.running = false;
+            controllerRunning = false;
             ui.btnStart.disabled = false;
             ui.btnStop.disabled = true;
 
             clearInterval(creatorInterval);
+            
+            sLight1.reset();
+            sLight2.reset();
+            sEmpty1.reset();
+            sEmpty2.reset();
             
             lane1.forEach(v => v.element.remove());
             lane2.forEach(v => v.element.remove());
@@ -778,19 +759,13 @@
             lane2 = [];
             crossing = 0;
             
-            updateLights(0, 'off');
+            ui.sim.dataset.light = 0;
             updateCounts();
 
             showMessage('error', '<strong>Simulação parada</strong>');
         }
 
         // ===== EVENT LISTENERS =====
-        document.getElementById('dynamicTimesCheckbox').addEventListener('change', function() {
-            const dynamicSection = document.getElementById('dynamicSection');
-            config.dynamicEnabled = this.checked;
-            dynamicSection.classList.toggle('disabled', !this.checked);
-        });
-
         document.getElementById('stringForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
