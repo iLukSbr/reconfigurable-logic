@@ -187,6 +187,14 @@
             background-color: green;
         }
 
+        #sim[data-light="1"][data-yellow="true"] #light-1 {
+            background-color: yellow;
+        }
+
+        #sim[data-light="2"][data-yellow="true"] #light-2 {
+            background-color: yellow;
+        }
+
         #light-1 {
             top: 75px;
             left: 120px;
@@ -416,7 +424,7 @@
             <div class="result" id="result"></div>
         </div>
 
-        <div id="sim" data-light="0" data-state="normal">
+        <div id="sim" data-light="0" data-state="normal" data-yellow="false">
             <span id="light-1" title="Semáforo 0 (Sul)"></span>
             <span id="light-2" title="Semáforo 1 (Oeste)"></span>
             <div id="lane-1" title="Via Sul"></div>
@@ -544,9 +552,20 @@
                 this.id = ++vehicleCounter;
                 this.lane = lane;
                 this.direction = direction;
-                this.color = freeColors.shift() || 'black';
+                this.color = this.getUniqueColor();
                 this.type = Math.random() < 0.25 ? 'truck' : 'car';
                 this.element = this.createElement();
+            }
+
+            getUniqueColor() {
+                if (freeColors.length === 0) {
+                    // Se acabaram as cores, gera uma cor aleatória
+                    const r = Math.floor(Math.random() * 200 + 55);
+                    const g = Math.floor(Math.random() * 200 + 55);
+                    const b = Math.floor(Math.random() * 200 + 55);
+                    return `rgb(${r}, ${g}, ${b})`;
+                }
+                return freeColors.shift();
             }
 
             createElement() {
@@ -609,7 +628,10 @@
 
             destroy() {
                 this.element.remove();
-                freeColors.push(this.color);
+                // Só devolve a cor se for uma das cores originais
+                if (!this.color.startsWith('rgb(')) {
+                    freeColors.push(this.color);
+                }
                 const targetLane = this.lane === 1 ? lane1 : lane2;
                 const index = targetLane.indexOf(this);
                 if (index > -1) {
@@ -624,24 +646,54 @@
             controllerRunning = true;
             
             while (config.running && controllerRunning) {
-                const interval = config.light === 1 ? 
-                    config.baseTimes.sem0.green : 
-                    config.baseTimes.sem1.green;
+                // Semáforo atual ativo
+                const currentSemTimes = config.light === 1 ? 
+                    config.baseTimes.sem0 : 
+                    config.baseTimes.sem1;
                 
-                await sleep(interval);
+                // Fase VERDE do semáforo atual
+                ui.sim.dataset.yellow = 'false';
+                await sleep(currentSemTimes.green);
                 
                 if (!config.running) break;
                 
+                // Fase AMARELA do semáforo atual
+                ui.sim.dataset.yellow = 'true';
+                await sleep(currentSemTimes.yellow);
+                
+                if (!config.running) break;
+                
+                // Agora o semáforo atual fica VERMELHO e troca para o outro
+                // O tempo vermelho é o tempo que ele fica esperando o outro semáforo completar seu ciclo
                 if (config.light === 1) {
                     await sLight1.acquire('controller');
                     config.light = 2;
+                    ui.sim.dataset.yellow = 'false';
                     ui.sim.dataset.light = 2;
                     sLight2.release();
                 } else {
                     await sLight2.acquire('controller');
                     config.light = 1;
+                    ui.sim.dataset.yellow = 'false';
                     ui.sim.dataset.light = 1;
                     sLight1.release();
+                }
+                
+                // Nota: O tempo vermelho acontece naturalmente enquanto o outro semáforo
+                // está em seu ciclo (verde + amarelo). Se o tempo vermelho configurado
+                // for maior que (verde + amarelo) do outro semáforo, adicionamos o tempo extra
+                const otherSemTimes = config.light === 1 ? 
+                    config.baseTimes.sem0 : 
+                    config.baseTimes.sem1;
+                const prevSemTimes = config.light === 1 ? 
+                    config.baseTimes.sem1 : 
+                    config.baseTimes.sem0;
+                
+                const otherCycleTime = otherSemTimes.green + otherSemTimes.yellow;
+                const extraRedTime = prevSemTimes.red - otherCycleTime;
+                
+                if (extraRedTime > 0) {
+                    await sleep(extraRedTime);
                 }
             }
         }
@@ -722,10 +774,24 @@
             config.baseTimes.sem1.green = Number(document.getElementById('inputTimeGreen1').value);
             
             const initialState = document.getElementById('initialStateSelector').value;
-            config.light = initialState === 'R' || initialState === 'G' ? 1 : 2;
             
-            sLight1.permits = config.light === 1 ? 1 : 0;
-            sLight2.permits = config.light === 2 ? 1 : 0;
+            // Define qual semáforo começa verde baseado no estado inicial
+            // R, Y, G = Semáforo 0 (Sul) começa ativo
+            if (initialState === 'R' || initialState === 'Y' || initialState === 'G') {
+                config.light = 1;
+                sLight1.permits = 1;
+                sLight2.permits = 0;
+            } else {
+                config.light = 2;
+                sLight1.permits = 0;
+                sLight2.permits = 1;
+            }
+            
+            // Limpa filas dos semáforos
+            sLight1.queue = [];
+            sLight2.queue = [];
+            sEmpty1.queue = [];
+            sEmpty2.queue = [];
 
             config.running = true;
             ui.btnStart.disabled = true;
@@ -759,7 +825,12 @@
             lane2 = [];
             crossing = 0;
             
+            // Restaura cores disponíveis
+            freeColors = ['blue', 'coral', 'darkkhaki', 'firebrick', 'yellowgreen', 
+                          'gray', 'skyblue', 'teal', 'orange', 'pink', 'purple', 'yellow'];
+            
             ui.sim.dataset.light = 0;
+            ui.sim.dataset.yellow = 'false';
             updateCounts();
 
             showMessage('error', '<strong>Simulação parada</strong>');
