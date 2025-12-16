@@ -197,155 +197,167 @@
         #sim {
             width: 640px;
             height: 360px;
+
             display: block;
             position: relative;
             background: black;
             border: 2px solid black;
-            margin: 20px auto;
+            margin: 10px auto;
             overflow: hidden;
-            border-radius: 8px;
-        }
+            }
 
-        #sim > * {
+            #sim > * {
             position: absolute;
-        }
+            }
 
-        #light-1, #light-2 {
+            #light-1, #light-2 {
             display: inline-block;
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: gray;
+            background-color: red;
             background-image: url(images/traffic-lights.svg);
             border: 3px solid transparent;
-            transition: background-color 0.3s;
-        }
-
-        #sim[data-light="0"] #light-1, #sim[data-light="0"] #light-2 {
+            }
+            #sim[data-ctrl-queued="true"] #light-1, #sim[data-ctrl-queued="true"] #light-2 {
+            border-color: yellow;
+            }
+            #sim[data-light="0"] #light-1, #sim[data-light="0"] #light-2 {
             background-color: gray !important;
-        }
-
-        #sim[data-light="1"] #light-1 {
+            }
+            #sim[data-light="1"] #light-1 {
             background-color: green;
-            box-shadow: 0 0 20px green;
-        }
-
-        #sim[data-light="2"] #light-2 {
+            }
+            #sim[data-light="2"] #light-2 {
             background-color: green;
-            box-shadow: 0 0 20px green;
-        }
+            }
 
-        #light-1 {
+            #light-1 {
             top: 75px;
             left: 120px;
-        }
-
-        #light-2 {
+            }
+            #light-2 {
             top: 180px;
-            left: 120px;
-        }
+            right: 240px;
+            }
 
-        #intersection, #lane-1, #lane-2 {
+            #intersection, #lane-1, #lane-2 {
             background: white;
-        }
+            }
 
-        #lane-1 {
+            #lane-1 {
             left: 180px;
             width: 50px;
             height: 100%;
-        }
+            }
 
-        #lane-2 {
+            #lane-2 {
             bottom: 70px;
             height: 50px;
             width: 100%;
-        }
+            }
 
-        #intersection {
+            #intersection {
             border-radius: 50%;
             width: 110px;
             height: 110px;
             top: 205px;
             left: 150px;
+
             display: grid;
             place-items: center center;
-        }
-
-        #sim[data-state="error"] #intersection {
+            }
+            #sim[data-state="error"] #intersection {
             background: radial-gradient(red, transparent);
-        }
+            }
 
-        /* ===== VEÍCULOS ===== */
-        .vehicle {
+            .vehicle {
+            /* Resetado por JavaScript */
             --color: black;
             --pos: 10;
-            --delta-x: 50;
-            --delta-y: 0;
-            --rotate-y: 0deg;
-            --rotate-z: 0deg;
-
+            
             display: inline-block;
             width: 45px;
             height: 45px;
             margin: 2px;
             position: absolute;
             background-color: var(--color);
-            border-radius: 5px;
+            background-position: center;
+            background-repeat: no-repeat;
 
             will-change: transform;
             transition: transform 0.3s;
-            transform: translate(
+            transform:
+                translate(
                 calc((var(--pos) + 1.5) * var(--delta-x) * 1px),
                 calc((var(--pos) + 1.5) * var(--delta-y) * 1px)
-            )
-            rotateY(var(--rotate-y))
-            rotateZ(var(--rotate-z));
-        }
+                )
 
-        .vehicle.south {
-            --rotate-y: 0deg;
-            --rotate-z: 90deg;
-            --delta-x: 0;
-            --delta-y: -50;
-        }
+                rotateY(var(--rotate-y))
+                rotateZ(var(--rotate-z));
+            }
+            .vehicle.car { background-image: url(images/city-car.svg); }
+            .vehicle.truck { background-image: url(images/truck.svg); }
 
-        .vehicle.west {
+            #sim[data-state="error"] .vehicle[data-state="leaving"] {
+            --pos: -1.5 !important; /* final position = 0 = -1.5 + 1.5 */
+            position: static;
+            animation: none;
+            }
+
+            .vehicle.west {
             --rotate-y: 180deg;
             --rotate-z: 0deg;
+
             --delta-x: 50;
             --delta-y: 0;
-        }
+            }
 
-        .vehicle.car { background-image: url(images/city-car.svg); }
-        .vehicle.truck { background-image: url(images/truck.svg); }
+            .vehicle.south {
+            --rotate-y: 0deg;
+            --rotate-z: 90deg;
 
-        .vehicle[data-state="leaving"] {
+            --delta-x: 0;
+            --delta-y: -50;
+            }
+
+            .vehicle[data-state="leaving"] {
             animation: 1.5s vehicle-leave ease-in forwards;
-        }
+            }
 
-        @keyframes vehicle-leave {
+            @keyframes vehicle-leave {
             0% {
                 opacity: 1;
-                transform: translate(
+
+                transform:
+                translate(
                     calc((var(--pos) + 1.5) * var(--delta-x) * 1px),
                     calc((var(--pos) + 1.5) * var(--delta-y) * 1px)
                 )
+
                 rotateY(var(--rotate-y))
                 rotateZ(var(--rotate-z));
             }
+
             75% {
                 opacity: 1;
             }
+            
             100% {
                 opacity: 0;
-                transform: translate(
+
+                transform:
+                translate(
                     calc(var(--delta-x) * -2.5px),
                     calc(var(--delta-y) * -1.5px)
                 )
+
                 rotateY(var(--rotate-y))
                 rotateZ(var(--rotate-z));
             }
-        }
+
+            }
+
 
         /* ===== STATUS ===== */
         .status-panel {
@@ -585,12 +597,13 @@
                 this.direction = direction;
                 this.color = freeColors.shift() || 'black';
                 this.canGo = false;
+                this.type = Math.random() < 0.25 ? 'truck' : 'car';
                 this.element = this.createElement();
             }
 
             createElement() {
                 const el = document.createElement('div');
-                el.className = `vehicle ${this.direction}`;
+                el.className = `vehicle ${this.type} ${this.direction}`;
                 el.style.setProperty('--color', this.color);
                 el.style.setProperty('--pos', this.lane === 1 ? '4' : '7');
                 el.title = `Veículo #${this.id}`;
