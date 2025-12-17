@@ -398,11 +398,13 @@
                         <div class="form-group">
                             <label for="inputTimeGreen1">🟢 Tempo Verde (s):</label>
                             <input type="number" id="inputTimeGreen1" value="12" min="1" max="999" required>
+                            <input type="number" id="inputTimeGreen1" value="12" min="1" max="999" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
+                    <label for="initialStateSelector">🚥 Estado Inicial do Semáforo 0 (Vertical):</label>
                     <label for="initialStateSelector">🚥 Estado Inicial do Semáforo 0 (Vertical):</label>
                     <select id="initialStateSelector" required>
                         <option value="R">🔴 Vermelho</option>
@@ -410,6 +412,14 @@
                         <option value="G">🟢 Verde</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="dynamicTimes">
+                        ⏱️ Usar tempos dinâmicos (baseado no fluxo)
+                    </label>
+                </div>
+
 
                 <div class="form-group">
                     <label>
@@ -508,11 +518,18 @@
             baseTimes: {
                 sem0: { red: 15, yellow: 3, green: 12 },
                 sem1: { red: 15, yellow: 3, green: 12 }
+                sem0: { red: 15, yellow: 3, green: 12 },
+                sem1: { red: 15, yellow: 3, green: 12 }
             },
             dynamic: false,
             minGreen: 5,
             maxGreen: 25,
+            dynamic: false,
+            minGreen: 5,
+            maxGreen: 25,
             running: false,
+            light: 1,
+            phase: 'GREEN' // 'GREEN' | 'YELLOW'
             light: 1,
             phase: 'GREEN' // 'GREEN' | 'YELLOW'
         };
