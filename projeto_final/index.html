@@ -608,7 +608,7 @@
                     if (this.lane === 1) {
                         await sLight1.acquire(this);
 
-                        while (!canPass(1)) {
+                        while (!canPass(1) || lane1[0] !== this) {
                             sLight1.release();
                             await sleep(0.1);
                             await sLight1.acquire(this);
@@ -620,14 +620,15 @@
                     } else {
                         await sLight2.acquire(this);
 
-while (!canPass(2)) {
-    sLight2.release();
-    await sleep(0.1);
-    await sLight2.acquire(this);
-}
+                    while (!canPass(2) || lane2[0] !== this) {
+                        sLight2.release();
+                        await sleep(0.1);
+                        await sLight2.acquire(this);
+                    }
 
-await this.traverse();
-sLight2.release();
+
+                    await this.traverse();
+                    sLight2.release();
 
                     }
                 } catch (error) {
