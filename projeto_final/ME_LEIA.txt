@@ -32,7 +32,10 @@ Mensagem de status enviada pela placa NIOS II é "CC":
 A primeira parte C (1 char) indica a cor do semáforo 0, e a segunda parte C (1 char) indica a cor do semáforo 1.
 Caso C seja R, o semáforo está vermelho; se Y, amarelo; se G, verde.
 
-Web: na luz verde e amarela, os veículos se movimentam na simulação, e na luz vermelha, eles param.
+Web: 
+na luz verde, os veículos se movimentam na simulação, 
+na amarela terminam de ultrapassar o cruzamento se já estiverem atravessando ou param
+e na luz vermelha, eles param.
 
 Displays 7 segmentos:
 Barras horizontais indicam cada luz do semáforo (vermelho - superior, amarelo - do meio, verde - inferior).
