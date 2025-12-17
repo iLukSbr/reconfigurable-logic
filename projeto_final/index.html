@@ -372,7 +372,7 @@
                         <h3>Semáforo 0 (Vertical)</h3>
                         <div class="form-group">
                             <label for="inputTimeRed0">🔴 Tempo Vermelho (s):</label>
-                            <input type="number" id="inputTimeRed0" value="10" min="1" max="999" required>
+                            <input type="number" id="inputTimeRed0" value="15" min="1" max="999" required>
                         </div>
                         <div class="form-group">
                             <label for="inputTimeYellow0">🟡 Tempo Amarelo (s):</label>
@@ -380,7 +380,7 @@
                         </div>
                         <div class="form-group">
                             <label for="inputTimeGreen0">🟢 Tempo Verde (s):</label>
-                            <input type="number" id="inputTimeGreen0" value="15" min="1" max="999" required>
+                            <input type="number" id="inputTimeGreen0" value="12" min="1" max="999" required>
                         </div>
                     </div>
 
@@ -396,19 +396,27 @@
                         </div>
                         <div class="form-group">
                             <label for="inputTimeGreen1">🟢 Tempo Verde (s):</label>
-                            <input type="number" id="inputTimeGreen1" value="10" min="1" max="999" required>
+                            <input type="number" id="inputTimeGreen1" value="12" min="1" max="999" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="initialStateSelector">🚥 Estado Inicial:</label>
+                    <label for="initialStateSelector">🚥 Estado Inicial do Semáforo 0 (Vertical):</label>
                     <select id="initialStateSelector" required>
                         <option value="R">🔴 Vermelho</option>
                         <option value="Y">🟡 Amarelo</option>
                         <option value="G">🟢 Verde</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="dynamicTimes">
+                        ⏱️ Usar tempos dinâmicos (baseado no fluxo)
+                    </label>
+                </div>
+
 
                 <div class="button-group">
                     <button type="submit" class="btn-process">Enviar para NIOS</button>
@@ -483,19 +491,25 @@
                 }
             }
 
-            reset() {
-                this.queue = [];
-            }
+            reset(permits = 0) {
+    this.queue = [];
+    this.permits = permits;
+}
+
         }
 
         // ===== CONFIGURAÇÃO GLOBAL =====
         const config = {
             baseTimes: {
-                sem0: { red: 10, yellow: 3, green: 15 },
-                sem1: { red: 15, yellow: 3, green: 10 }
+                sem0: { red: 15, yellow: 3, green: 12 },
+                sem1: { red: 15, yellow: 3, green: 12 }
             },
+            dynamic: false,
+            minGreen: 5,
+            maxGreen: 25,
             running: false,
-            light: 1
+            light: 1,
+            phase: 'GREEN' // 'GREEN' | 'YELLOW'
         };
 
         // ===== SEMÁFOROS DE CONTROLE =====
@@ -546,6 +560,17 @@
             ui.countWest.textContent = lane2.length;
         }
 
+        function getDynamicGreenTime() {
+            const cars =
+                config.light === 1 ? lane1.length : lane2.length;
+
+            // Cada carro adiciona 1.5s
+            let green = config.minGreen + cars * 1.5;
+
+            return Math.min(config.maxGreen, Math.max(config.minGreen, green));
+        }
+
+
         // ===== CLASSE VEÍCULO =====
         class Vehicle {
             constructor(lane, direction) {
@@ -581,17 +606,29 @@
             async run() {
                 try {
                     if (this.lane === 1) {
-                        await sEmpty1.acquire(this);
                         await sLight1.acquire(this);
+
+                        while (!canPass(1)) {
+                            sLight1.release();
+                            await sleep(0.1);
+                            await sLight1.acquire(this);
+                        }
+
                         await this.traverse();
                         sLight1.release();
-                        sEmpty1.release();
+
                     } else {
-                        await sEmpty2.acquire(this);
                         await sLight2.acquire(this);
-                        await this.traverse();
-                        sLight2.release();
-                        sEmpty2.release();
+
+while (!canPass(2)) {
+    sLight2.release();
+    await sleep(0.1);
+    await sLight2.acquire(this);
+}
+
+await this.traverse();
+sLight2.release();
+
                     }
                 } catch (error) {
                     console.error('Erro no veículo:', error);
@@ -646,56 +683,40 @@
             controllerRunning = true;
             
             while (config.running && controllerRunning) {
-                // Semáforo atual ativo
-                const currentSemTimes = config.light === 1 ? 
-                    config.baseTimes.sem0 : 
-                    config.baseTimes.sem1;
-                
-                // Fase VERDE do semáforo atual
+            const currentSemTimes = config.light === 1
+                ? config.baseTimes.sem0
+                : config.baseTimes.sem1;
+
+            /* ===== FASE VERDE ===== */
+            if (config.phase === 'GREEN') {
                 ui.sim.dataset.yellow = 'false';
-                await sleep(currentSemTimes.green);
                 
+                const greenTime = config.dynamic
+                    ? getDynamicGreenTime()
+                    : currentSemTimes.green;
+
+                await sleep(greenTime);
+
+
                 if (!config.running) break;
-                
-                // Fase AMARELA do semáforo atual
+                config.phase = 'YELLOW';
+            }
+
+            /* ===== FASE AMARELA ===== */
+            if (config.phase === 'YELLOW') {
                 ui.sim.dataset.yellow = 'true';
                 await sleep(currentSemTimes.yellow);
-                
                 if (!config.running) break;
-                
-                // Agora o semáforo atual fica VERMELHO e troca para o outro
-                // O tempo vermelho é o tempo que ele fica esperando o outro semáforo completar seu ciclo
-                if (config.light === 1) {
-                    await sLight1.acquire('controller');
-                    config.light = 2;
-                    ui.sim.dataset.yellow = 'false';
-                    ui.sim.dataset.light = 2;
-                    sLight2.release();
-                } else {
-                    await sLight2.acquire('controller');
-                    config.light = 1;
-                    ui.sim.dataset.yellow = 'false';
-                    ui.sim.dataset.light = 1;
-                    sLight1.release();
-                }
-                
-                // Nota: O tempo vermelho acontece naturalmente enquanto o outro semáforo
-                // está em seu ciclo (verde + amarelo). Se o tempo vermelho configurado
-                // for maior que (verde + amarelo) do outro semáforo, adicionamos o tempo extra
-                const otherSemTimes = config.light === 1 ? 
-                    config.baseTimes.sem0 : 
-                    config.baseTimes.sem1;
-                const prevSemTimes = config.light === 1 ? 
-                    config.baseTimes.sem1 : 
-                    config.baseTimes.sem0;
-                
-                const otherCycleTime = otherSemTimes.green + otherSemTimes.yellow;
-                const extraRedTime = prevSemTimes.red - otherCycleTime;
-                
-                if (extraRedTime > 0) {
-                    await sleep(extraRedTime);
-                }
+
+                /* ===== TROCA DE SEMÁFORO ===== */
+        config.light = (config.light === 1) ? 2 : 1;
+        ui.sim.dataset.light = config.light;
+        syncPermits();
+        config.phase = 'GREEN';
+        ui.sim.dataset.yellow = 'false';
             }
+        }
+
         }
 
         // ===== CRIAÇÃO DE VEÍCULOS =====
@@ -764,47 +785,68 @@
             }
         }
 
-        // ===== CONTROLES =====
-        function start() {
-            config.baseTimes.sem0.red = Number(document.getElementById('inputTimeRed0').value);
-            config.baseTimes.sem0.yellow = Number(document.getElementById('inputTimeYellow0').value);
-            config.baseTimes.sem0.green = Number(document.getElementById('inputTimeGreen0').value);
-            config.baseTimes.sem1.red = Number(document.getElementById('inputTimeRed1').value);
-            config.baseTimes.sem1.yellow = Number(document.getElementById('inputTimeYellow1').value);
-            config.baseTimes.sem1.green = Number(document.getElementById('inputTimeGreen1').value);
-            
-            const initialState = document.getElementById('initialStateSelector').value;
-            
-            // Define qual semáforo começa verde baseado no estado inicial
-            // R, Y, G = Semáforo 0 (Vertical) começa ativo
-            if (initialState === 'R' || initialState === 'Y' || initialState === 'G') {
-                config.light = 1;
+        function syncPermits() {
+            if (config.light === 1) {
                 sLight1.permits = 1;
                 sLight2.permits = 0;
             } else {
-                config.light = 2;
                 sLight1.permits = 0;
                 sLight2.permits = 1;
             }
-            
-            // Limpa filas dos semáforos
-            sLight1.queue = [];
-            sLight2.queue = [];
-            sEmpty1.queue = [];
-            sEmpty2.queue = [];
+
+            sLight1.maybeNotify();
+            sLight2.maybeNotify();
+        }
+
+        function canPass(lane) {
+    // só passa se for a via ativa E estiver em VERDE
+    return config.light === lane && config.phase === 'GREEN';
+}
+
+
+
+
+        // ===== CONTROLES =====
+        function start() {
+            stop();
+
+            config.baseTimes.sem0.red = Number(inputTimeRed0.value);
+            config.baseTimes.sem0.yellow = Number(inputTimeYellow0.value);
+            config.baseTimes.sem0.green = Number(inputTimeGreen0.value);
+            config.baseTimes.sem1.red = Number(inputTimeRed1.value);
+            config.baseTimes.sem1.yellow = Number(inputTimeYellow1.value);
+            config.baseTimes.sem1.green = Number(inputTimeGreen1.value);
+
+            const initialState = initialStateSelector.value;
+
+            if (initialState === 'G') {
+                config.light = 1;
+                config.phase = 'GREEN';
+            } else if (initialState === 'Y') {
+                config.light = 1;
+                config.phase = 'YELLOW';
+            } else {
+                config.light = 2;
+                config.phase = 'GREEN';
+            }
+
+            ui.sim.dataset.light = config.light;
+            ui.sim.dataset.yellow = (config.phase === 'YELLOW').toString();
 
             config.running = true;
-            ui.btnStart.disabled = true;
-            ui.btnStop.disabled = false;
-            ui.sim.dataset.state = 'normal';
-            ui.sim.dataset.light = config.light;
+            controllerRunning = true;
 
-            creatorInterval = setInterval(maybeCreateVehicle, 1000);
+            syncPermits();
             trafficController();
             redraw();
+            creatorInterval = setInterval(maybeCreateVehicle, 1000);
+
+            ui.btnStart.disabled = true;
+            ui.btnStop.disabled = false;
 
             showMessage('success', '<strong>Simulação iniciada!</strong>');
         }
+
 
         function stop() {
             config.running = false;
@@ -814,10 +856,11 @@
 
             clearInterval(creatorInterval);
             
-            sLight1.reset();
-            sLight2.reset();
-            sEmpty1.reset();
-            sEmpty2.reset();
+            sLight1.reset(1);
+            sLight2.reset(0);
+            sEmpty1.reset(1);
+            sEmpty2.reset(1);
+
             
             lane1.forEach(v => v.element.remove());
             lane2.forEach(v => v.element.remove());
@@ -879,6 +922,10 @@
 
         ui.btnStart.addEventListener('click', start);
         ui.btnStop.addEventListener('click', stop);
+        document.getElementById('dynamicTimes').addEventListener('change', e => {
+            config.dynamic = e.target.checked;
+        });
+
 
         // ===== INICIALIZAÇÃO =====
         console.log('Sistema de controle de semáforos inicializado');
