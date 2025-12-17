@@ -5,7 +5,7 @@
 
 BSP_DIR=../simple_socket_bsp
 QUARTUS_PROJECT_DIR=../../
-NIOS2_APP_GEN_ARGS="--elf-name simple_socket.elf  --set OBJDUMP_INCLUDE_SOURCE 1 --src-files alt_error_handler.c iniche_init.c led.c network_utilities.c simple_socket_server.c tse_my_system.c"
+NIOS2_APP_GEN_ARGS="--elf-name simple_socket.elf  --set OBJDUMP_INCLUDE_SOURCE 1 --src-files alt_error_handler.c iniche_init.c led.c network_utilities.c simple_socket_server.c"
 
 
 # First, check to see if $SOPC_KIT_NIOS2 environmental variable is set.

@@ -20,6 +20,8 @@ typedef struct {
     semaphore_config_t config[3];       // Semaphore configuration.
     semaphore_state_t current_state; // Current state of the semaphore.
     uint16_t remaining_time;         // Remaining seconds of the state.
+    uint8_t running;                 // 1 = operating; 0 = idle (yellow blinking)
+    uint8_t idle_blink_on;           // toggle flag for idle blinking
 } semaphore_t; // Semaphore.
 
 /**
@@ -46,6 +48,28 @@ void goto_next_semaphore_state(const uint8_t semaphore_index);
  * @param config The new configuration.
  */
 void set_semaphore_config(const uint8_t semaphore_index, const semaphore_config_t config);
+
+/**
+ * @brief Sets all three time configurations for a specified semaphore.
+ * @param semaphore_index Index of the semaphore to configure (0 or 1).
+ * @param red_time Time in seconds for RED state (0-999).
+ * @param yellow_time Time in seconds for YELLOW state (0-999).
+ * @param green_time Time in seconds for GREEN state (0-999).
+ */
+void set_semaphore_times(const uint8_t semaphore_index, uint16_t red_time, uint16_t yellow_time, uint16_t green_time);
+
+/**
+ * @brief Starts semaphore operation with specified initial state.
+ * @param semaphore_index Index of the semaphore (0 or 1).
+ * @param initial_state Initial state to start with (RED, YELLOW, or GREEN).
+ */
+void start_semaphore(const uint8_t semaphore_index, const semaphore_state_t initial_state);
+
+/**
+ * @brief Stops semaphore operation.
+ * @param semaphore_index Index of the semaphore (0 or 1).
+ */
+void stop_semaphore(const uint8_t semaphore_index);
 
 /**
  * @brief Gets the current status of a specified semaphore.

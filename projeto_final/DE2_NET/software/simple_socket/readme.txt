@@ -49,7 +49,6 @@ and Simple Socket Server Application.
 - alt_error_handler.c: Implementation for 3 error handlers, one each for MicroC-OS/II, 
 Network, and Simple Socket Server Application.
 
-- tse_my_system.c: Allow customization of tse_mac_device[] structure through global array initialization.
 BOARD/HOST REQUIREMENTS:
 
 This example requires an Ethernet cable connected to the development board's 

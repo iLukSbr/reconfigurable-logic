@@ -1,45 +1,87 @@
-Universidade Tecnológica Federal do Paraná - UTFPR
-ELEW33-S71 Lógica Reconfigurável
-Prática 7 - Interfaceamento NIOS ETHERNET
-Projeto Nios II com servidor TCP/IP para processar strings via socket
-Prof. Luiz Fernando Copetti
+# Controlador de semáforo com simulador de tráfego
 
-Alunos:
-Lucas Yukio Fukuda Matsumoto e Letícia Walger Amaro
+- Universidade Tecnológica Federal do Paraná - UTFPR
+- ELEW33-S71 Lógica Reconfigurável
+- Prática 7 - Interfaceamento NIOS ETHERNET
+- Projeto Nios II com servidor TCP/IP para processar strings via socket
+- Prof. Luiz Fernando Copetti
+
+Alunos: Lucas Yukio Fukuda Matsumoto e Letícia Walger Amaro
 
 A pasta prints contém imagens e vídeos do funcionamento do projeto.
 
-Protocolo de comunicação do semáforo:
-O cliente tem uma visualização (animação) de simulação de tráfego na página web. Ideia: https://github.com/djalilhebal/softvis-traffic-semaphores
-É possível configurar os tempos iniciais dos semáforos via web por campos de digitação (0 a 999 segundos) para cada cor e cada semáforo (0 ou 1).
-Há um seletor para escolher qual a cor inicial do semáforo 0 apenas.
-Há um quadradinho de marcar/desmarcar se quer ativar tempos dinâmicos.
+## Protocolo de comunicação do semáforo
+- O cliente tem uma visualização (animação) de simulação de tráfego na página web. Ideia: https://github.com/djalilhebal/softvis-traffic-semaphores
+- É possível configurar os tempos iniciais dos semáforos via web por campos de digitação (0 a 999 segundos) para cada cor e cada semáforo (0 ou 1).
+- Há um seletor para escolher qual a cor inicial do semáforo 0 apenas.
+- Há um quadradinho de marcar/desmarcar se quer ativar tempos dinâmicos.
 
-O cliente envia uma string no formato "RRRYYYGGGRRRYYYGGGI":
-A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, a segunda parte RRRYYYGGG (9 chars) representa os tempos do semáforo 1 e a última parte I representa o estado inicial do semáforo 0.
-RRR tempo em segundos para o sinal vermelho;
-YYY tempo em segundos para o sinal amarelo;
-GGG tempo em segundos para o sinal verde.
-I estado inicial para o semáforo 0.
-O servidor NIOS II processa essa string e ajusta os tempos dos semáforos de acordo.
-O servidor responde com a string "OK" se os tempos forem configurados corretamente ou "ERROR" se houver algum problema na configuração.
-A mensagem é reenviada até receber "OK".
-Caso o tráfego esteja muito pesado em uma das vias, esse tempo é reajustado automaticamente, por pesos, se a opção dinâmica foi marcada.
-A conexão é mantida aberta para a placa enviar periodicamente o status de cada semáforo.
-Novos tempos só entram em vigor após o término do ciclo atual.
+- O cliente envia uma string no formato "RRRYYYGGGRRRYYYGGGI":
+- A primeira parte RRRYYYGGG (9 chars) representa os tempos do semáforo 0, a segunda parte RRRYYYGGG (9 chars) representa os tempos do semáforo 1 e a última - parte I representa o estado inicial do semáforo 0.
+- RRR tempo em segundos para o sinal vermelho;
+- YYY tempo em segundos para o sinal amarelo;
+- GGG tempo em segundos para o sinal verde.
+- I estado inicial para o semáforo 0.
+- O servidor NIOS II processa essa string e ajusta os tempos dos semáforos de acordo.
+- O servidor responde com a string "OK" se os tempos forem configurados corretamente ou "ERROR" se houver algum problema na configuração.
+- A mensagem é reenviada até receber "OK".
+- Caso o tráfego esteja muito pesado em uma das vias, esse tempo é reajustado automaticamente, por pesos, se a opção dinâmica foi marcada.
+- A conexão é mantida aberta para a placa enviar periodicamente o status de cada semáforo.
+- Novos tempos só entram em vigor após o término do ciclo atual.
 
+## Status
 Mensagem de status enviada pela placa NIOS II é "CC":
-A primeira parte C (1 char) indica a cor do semáforo 0, e a segunda parte C (1 char) indica a cor do semáforo 1.
-Caso C seja R, o semáforo está vermelho; se Y, amarelo; se G, verde.
+- A primeira parte C (1 char) indica a cor do semáforo 0, e a segunda parte C (1 char) indica a cor do semáforo 1.
+- Caso C seja R, o semáforo está vermelho; se Y, amarelo; se G, verde.
 
-Web: na luz verde e amarela, os veículos se movimentam na simulação, e na luz vermelha, eles param.
+Web: 
+na luz verde, os veículos se movimentam na simulação, 
+na amarela terminam de ultrapassar o cruzamento se já estiverem atravessando ou param
+e na luz vermelha, eles param.
 
-Displays 7 segmentos:
-Barras horizontais indicam cada luz do semáforo (vermelho - superior, amarelo - do meio, verde - inferior).
-HEX7 = semáforo ID 0
-HEX6 = semáforo ID 1
-HEX(5, 4, 3) = contador do semáforo ID 0 (centena, dezena e unidade dos segundos restantes)
-HEX(2, 1, 0) = contador do semáforo ID 1 (centena, dezena e unidade dos segundos restantes)
+## Displays 7 segmentos
+- Barras horizontais indicam cada luz do semáforo (vermelho - superior, amarelo - do meio, verde - inferior).
+- HEX7 = semáforo ID 0
+- HEX6 = semáforo ID 1
+- HEX(5, 4, 3) = contador do semáforo ID 0 (centena, dezena e unidade dos segundos restantes)
+- HEX(2, 1, 0) = contador do semáforo ID 1 (centena, dezena e unidade dos segundos restantes)
+
+## Arquitetura de Registradores
+
+### Registradores de ESCRITA (para cada semáforo):
+
+| Registrador | Offset | Descrição | Faixa |
+|-------------|--------|-----------|-------|
+| **REG0** | 0x00 | Tempo VERMELHO (segundos) | 0-999 |
+| **REG1** | 0x04 | Tempo AMARELO (segundos) | 0-999 |
+| **REG2** | 0x08 | Tempo VERDE (segundos) | 0-999 |
+| **REG3** | 0x0C | Registro de CONTROLE | - |
+
+#### REG3 - Registro de Controle:
+- **bit 0**: START - Inicia operação do semáforo
+- **bit 1**: STOP - Para operação do semáforo
+- **bits [3:2]**: INITIAL_STATE - Estado inicial (00=IDLE, 01=RED, 10=YELLOW, 11=GREEN)
+- **bit 4**: SEMAPHORE_ID - Qual semáforo (0 ou 1)
+
+### Registradores de LEITURA (para cada semáforo):
+
+| Registrador | Offset | Descrição |
+|-------------|--------|-----------|
+| **REG0** | 0x00 | STATUS - Estado atual |
+| **REG1** | 0x04 | REMAINING_TIME - Tempo restante (segundos) |
+
+#### REG0 - Registro de Status:
+- **bits [1:0]**: STATE (00=IDLE/OFF, 01=RED, 10=YELLOW, 11=GREEN)
+- **bit 2**: RUNNING - Semáforo está em operação
+
+## Endereços Base
+
+SEMAPHORE_0_BASE 0x1A82200
+SEMAPHORE_1_BASE 0x1A82240
+
+## Interrupção
+
+Utiliza mailbox do Nios II e envia estados dos semáforos ao cliente que manteve a conexão aberta via socket.
 
 COMO RODAR:
 

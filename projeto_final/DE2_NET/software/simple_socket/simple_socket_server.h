@@ -82,6 +82,7 @@
 void LEDManagementTask();
 void LED7SegLightshowTask();
 void SSSSimpleSocketServerTask();
+void SemaphoreStatusTask(void);
 
 void SSSCreateOSDataStructs();
 void SSSCreateTasks();
@@ -98,6 +99,7 @@ void SSSCreateTasks();
 #define SSS_TX_TASK_PRIORITY                    9
 #define SSS_INITIAL_TASK_PRIORITY               5
 #define SEMAPHORE_TASK_PRIORITY                 18
+#define SEMAPHORE_STATUS_TASK_PRIORITY          11
 
 /* 
  * The IP, gateway, and subnet mask address below are used as a last resort
