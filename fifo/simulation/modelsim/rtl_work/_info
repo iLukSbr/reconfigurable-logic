@@ -1,0 +1,263 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\altera\13.0sp1\reconfigurable-logic\fifo\simulation\modelsim
+Ebram_destino
+Z1 w1759936815
+Z2 DPx3 std 6 textio 0 22 5>J:;AW>W0[[dW0I6EN1Q0
+Z3 DPx4 ieee 14 std_logic_1164 0 22 5=aWaoGZSMWIcH0i^f`XF1
+Z4 dC:\altera\13.0sp1\reconfigurable-logic\fifo\simulation\modelsim
+Z5 8C:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Destino.vhd
+Z6 FC:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Destino.vhd
+l0
+L42
+VeWZ_W]nGBfX9GW7VZHDfK3
+Z7 OV;C;10.1d;51
+31
+Z8 !s108 1759932973.261000
+Z9 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Destino.vhd|
+Z10 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Destino.vhd|
+Z11 o-93 -work work -O0
+Z12 tExplicit 1
+!s100 N^2VQ?fVdT03>_jU>b0O70
+!i10b 1
+Asyn
+R2
+R3
+Z13 DEx4 work 12 bram_destino 0 22 eWZ_W]nGBfX9GW7VZHDfK3
+l85
+L54
+V0D9WR;c3oHdLO`4>XA27P0
+R7
+31
+R8
+R9
+R10
+R11
+R12
+!s100 T9MnG7R<]D<P=EXbX3emZ3
+!i10b 1
+Ebram_origem
+Z14 w1759936837
+R2
+R3
+R4
+Z15 8C:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Origem.vhd
+Z16 FC:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Origem.vhd
+l0
+L42
+V696P>e>kI=Clcen?Ac4<D0
+R7
+31
+Z17 !s108 1759932973.222000
+Z18 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Origem.vhd|
+Z19 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/BRAM_Origem.vhd|
+R11
+R12
+!s100 dH7QPohBHkoUfPPj1jz5A3
+!i10b 1
+Asyn
+R2
+R3
+Z20 DEx4 work 11 bram_origem 0 22 696P>e>kI=Clcen?Ac4<D0
+l85
+L54
+VOPa@FO_^8jz@d7a0RE7YE1
+R7
+31
+R17
+R18
+R19
+R11
+R12
+!s100 FmgK;mQJT=Zd;_YOTE17e2
+!i10b 1
+Efifo
+Z21 w1759936061
+R2
+R3
+R4
+Z22 8C:/altera/13.0sp1/reconfigurable-logic/fifo/FIFO.vhd
+Z23 FC:/altera/13.0sp1/reconfigurable-logic/fifo/FIFO.vhd
+l0
+L42
+V8g@KoV^o;?BGiB5fCTN;G3
+R7
+31
+Z24 !s108 1759932973.149000
+Z25 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/FIFO.vhd|
+Z26 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/FIFO.vhd|
+R11
+R12
+!s100 [kiCVODcA_^ToZQ>Wli?h2
+!i10b 1
+Asyn
+R2
+R3
+Z27 DEx4 work 4 fifo 0 22 8g@KoV^o;?BGiB5fCTN;G3
+l99
+L59
+VNY[Oa6^g<H`UTznfo8P^W1
+R7
+31
+R24
+R25
+R26
+R11
+R12
+!s100 iQS;V77HU^nGCF=dT78870
+!i10b 1
+Eflowcontroltop
+Z28 w1759932818
+Z29 DPx4 ieee 11 numeric_std 0 22 O3PF8EB`?j9=z7KT`fn941
+R2
+R3
+R4
+Z30 8C:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop.vhd
+Z31 FC:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop.vhd
+l0
+L7
+VVciCW]Y`o23BMO9bd[Y_^3
+R7
+31
+Z32 !s108 1759932973.387000
+Z33 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop.vhd|
+Z34 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop.vhd|
+R11
+R12
+!s100 ]6FJb7cciUkG:VbWX=:KW0
+!i10b 1
+Artl
+Z35 DEx4 work 14 readcontroller 0 22 PO^hB_`:h:Q<aDH_mk3<O0
+Z36 DEx4 work 15 writecontroller 0 22 `E7k;V^>ISIzUCMhT@`?f2
+R27
+R13
+R20
+R29
+R2
+R3
+Z37 DEx4 work 14 flowcontroltop 0 22 VciCW]Y`o23BMO9bd[Y_^3
+l44
+L15
+VjBE:D_ZhNARIQgCL>GV3[3
+R7
+31
+R32
+R33
+R34
+R11
+R12
+!s100 dY>o`7hFTe3bkGoM>1;Mn3
+!i10b 1
+Eflowcontroltop_tb
+Z38 w1759931784
+R2
+R3
+R4
+Z39 8C:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop_tb.vhd
+Z40 FC:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop_tb.vhd
+l0
+L4
+V90UXaUXNOAm>8neM<UbAU1
+!s100 :mdIQF5N34`<a`M48:?@72
+R7
+31
+!i10b 1
+Z41 !s108 1759932973.429000
+Z42 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop_tb.vhd|
+Z43 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/FlowControlTop_tb.vhd|
+R11
+R12
+Atb
+R29
+R37
+R2
+R3
+DEx4 work 17 flowcontroltop_tb 0 22 90UXaUXNOAm>8neM<UbAU1
+l14
+L7
+Vb7R?<_759J12>UbKPSNb@1
+!s100 [9n]?2SAz>^hkmV=HA^U93
+R7
+31
+!i10b 1
+R41
+R42
+R43
+R11
+R12
+Ereadcontroller
+Z44 w1759931447
+R29
+R2
+R3
+R4
+Z45 8C:/altera/13.0sp1/reconfigurable-logic/fifo/ReadController.vhd
+Z46 FC:/altera/13.0sp1/reconfigurable-logic/fifo/ReadController.vhd
+l0
+L6
+VPO^hB_`:h:Q<aDH_mk3<O0
+R7
+31
+Z47 !s108 1759932973.347000
+Z48 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/ReadController.vhd|
+Z49 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/ReadController.vhd|
+R11
+R12
+!s100 XH;Yo<2?AN[1CA2X[JchS3
+!i10b 1
+Artl
+R29
+R2
+R3
+R35
+l42
+L27
+VDlU0__KmOZMQ<TUab@UIX2
+R7
+31
+R47
+R48
+R49
+R11
+R12
+!s100 bP?mLMLg<LWQ`jK@49b;Q2
+!i10b 1
+Ewritecontroller
+Z50 w1759932068
+R29
+R2
+R3
+R4
+Z51 8C:/altera/13.0sp1/reconfigurable-logic/fifo/WriteController.vhd
+Z52 FC:/altera/13.0sp1/reconfigurable-logic/fifo/WriteController.vhd
+l0
+L6
+V`E7k;V^>ISIzUCMhT@`?f2
+R7
+31
+Z53 !s108 1759932973.302000
+Z54 !s90 -reportprogress|300|-93|-work|work|C:/altera/13.0sp1/reconfigurable-logic/fifo/WriteController.vhd|
+Z55 !s107 C:/altera/13.0sp1/reconfigurable-logic/fifo/WriteController.vhd|
+R11
+R12
+!s100 7aK_A2a1jOSR?4j8EzZWZ1
+!i10b 1
+Artl
+R29
+R2
+R3
+R36
+l47
+L29
+VDc=D<?AUQA@ZzSczi5d@C0
+R7
+31
+R53
+R54
+R55
+R11
+R12
+!s100 D4`GPTJfBMKzbMzS4H@QV1
+!i10b 1

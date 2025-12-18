@@ -14,5 +14,6 @@
         "_nios2__",
         "__nios2__"
     ],
-    "C_Cpp.intelliSenseCachePath": ".vscode/ipch"
+    "C_Cpp.intelliSenseCachePath": ".vscode/ipch",
+    "idf.pythonInstallPath": "c:\\esp\\esp-idf\\tools\\tools\\idf-python\\3.11.2\\python.exe"
 }

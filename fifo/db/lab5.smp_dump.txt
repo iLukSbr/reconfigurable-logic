@@ -1,0 +1,16 @@
+
+State Machine - |FlowControlTop|ReadController:read_ctrl|state
+Name state.S_DONE state.S_WRITE_BRAM state.S_READ_FIFO state.S_IDLE 
+state.S_IDLE 0 0 0 0 
+state.S_READ_FIFO 0 0 1 1 
+state.S_WRITE_BRAM 0 1 0 1 
+state.S_DONE 1 0 0 1 
+
+State Machine - |FlowControlTop|WriteController:write_ctrl|state
+Name state.S_DONE state.S_WAIT_FIFO state.S_WRITE_FIFO state.S_READ_BRAM state.S_LOAD_BRAM state.S_IDLE 
+state.S_IDLE 0 0 0 0 0 0 
+state.S_LOAD_BRAM 0 0 0 0 1 1 
+state.S_READ_BRAM 0 0 0 1 0 1 
+state.S_WRITE_FIFO 0 0 1 0 0 1 
+state.S_WAIT_FIFO 0 1 0 0 0 1 
+state.S_DONE 1 0 0 0 0 1 

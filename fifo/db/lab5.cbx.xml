@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<LOG_ROOT>
+	<PROJECT NAME="lab5">
+		<CBX_INST_ENTRY INSTANCE_NAME="|FlowControlTop|BRAM_Destino:dest_bram|altsyncram:altsyncram_component" CBX_FILE_NAME="altsyncram_m7a1.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|FlowControlTop|BRAM_Origem:src_bram|altsyncram:altsyncram_component" CBX_FILE_NAME="altsyncram_m7a1.tdf"/>
+		<CBX_INST_ENTRY INSTANCE_NAME="|FlowControlTop|FIFO:fifo_inst|scfifo:scfifo_component" CBX_FILE_NAME="scfifo_b5a1.tdf"/>
+	</PROJECT>
+</LOG_ROOT>
