@@ -398,13 +398,11 @@
                         <div class="form-group">
                             <label for="inputTimeGreen1">🟢 Tempo Verde (s):</label>
                             <input type="number" id="inputTimeGreen1" value="12" min="1" max="999" required>
-                            <input type="number" id="inputTimeGreen1" value="12" min="1" max="999" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="initialStateSelector">🚥 Estado Inicial do Semáforo 0 (Vertical):</label>
                     <label for="initialStateSelector">🚥 Estado Inicial do Semáforo 0 (Vertical):</label>
                     <select id="initialStateSelector" required>
                         <option value="R">🔴 Vermelho</option>
@@ -419,15 +417,6 @@
                         ⏱️ Usar tempos dinâmicos (baseado no fluxo)
                     </label>
                 </div>
-
-
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="dynamicTimes">
-                        ⏱️ Usar tempos dinâmicos (baseado no fluxo)
-                    </label>
-                </div>
-
 
                 <div class="button-group">
                     <button type="submit" class="btn-process">Enviar para NIOS</button>
@@ -512,24 +501,17 @@
 
         // ===== CONFIGURAÇÃO GLOBAL =====
 
-        const USE_NIOS_AS_MASTER = true;
+        let USE_NIOS_AS_MASTER = true;
 
         const config = {
             baseTimes: {
-                sem0: { red: 15, yellow: 3, green: 12 },
-                sem1: { red: 15, yellow: 3, green: 12 }
                 sem0: { red: 15, yellow: 3, green: 12 },
                 sem1: { red: 15, yellow: 3, green: 12 }
             },
             dynamic: false,
             minGreen: 5,
             maxGreen: 25,
-            dynamic: false,
-            minGreen: 5,
-            maxGreen: 25,
             running: false,
-            light: 1,
-            phase: 'GREEN' // 'GREEN' | 'YELLOW'
             light: 1,
             phase: 'GREEN' // 'GREEN' | 'YELLOW'
         };
@@ -790,6 +772,18 @@
                     throw new Error('Não foi possível obter o IP do NIOS');
                 }
                 const ipData = await ipResponse.json();
+                
+                // Check if NIOS is available, if not, switch to simulator mode
+                if (ipData.useSimulator) {
+                    console.warn('NIOS not available, switching to simulator mode');
+                    USE_NIOS_AS_MASTER = false;
+                    showMessage('warning', '<strong>NIOS não disponível.</strong> Modo simulador ativado.');
+                    return { success: true, simulator: true };
+                }
+                
+                // NIOS disponível: garanta modo master
+                USE_NIOS_AS_MASTER = true;
+                
                 const niosIP = ipData.ip;
 
                 console.log(`Sending to NIOS: ${niosIP}:80/process`, commandString);
@@ -903,7 +897,7 @@
 
 
         // ===== CONTROLES =====
-        function start() {
+        async function start() {
             stop();
 
             config.baseTimes.sem0.red = Number(inputTimeRed0.value);
@@ -933,15 +927,30 @@
             controllerRunning = true;
 
             syncPermits();
-            if (!USE_NIOS_AS_MASTER) {
+            
+            // Send initial command to NIOS or start local controller
+            if (USE_NIOS_AS_MASTER) {
+                const commandString = buildCommandString(config.baseTimes);
+                const result = await sendToNios(commandString);
+                
+                // If NIOS failed and switched to simulator, start local controller
+                if (result.simulator || !result.success) {
+                    console.log('Starting local traffic controller (simulator mode)');
+                    trafficController();
+                }
+            } else {
+                console.log('Starting local traffic controller (manual mode)');
                 trafficController();   // só roda no modo local
             }
+            
             redraw();
             creatorInterval = setInterval(maybeCreateVehicle, 1000);
             
-            // Inicia polling de status do NIOS a cada 2 segundos
-            if (statusInterval) clearInterval(statusInterval);
-            statusInterval = setInterval(fetchNiosStatus, 2000);
+            // Inicia polling de status do NIOS apenas se estiver usando NIOS
+            if (USE_NIOS_AS_MASTER) {
+                if (statusInterval) clearInterval(statusInterval);
+                statusInterval = setInterval(fetchNiosStatus, 2000);
+            }
 
             ui.btnStart.disabled = true;
             ui.btnStop.disabled = false;
