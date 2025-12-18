@@ -1,0 +1,154 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\Users\lucas\reconfigurable-logic\cronometro\simulation\modelsim
+Ebcd_display
+Z1 w1758202506
+Z2 DPx4 ieee 11 numeric_std 0 22 O3PF8EB`?j9=z7KT`fn941
+Z3 DPx3 std 6 textio 0 22 5>J:;AW>W0[[dW0I6EN1Q0
+Z4 DPx4 ieee 14 std_logic_1164 0 22 5=aWaoGZSMWIcH0i^f`XF1
+Z5 dC:\Users\lucas\reconfigurable-logic\cronometro\simulation\modelsim
+Z6 8C:/Users/lucas/reconfigurable-logic/cronometro/bcd_display.vhd
+Z7 FC:/Users/lucas/reconfigurable-logic/cronometro/bcd_display.vhd
+l0
+L5
+V_=Kb]HLM?Sj_j^j>JQ6QN2
+Z8 OV;C;10.1d;51
+31
+Z9 !s108 1758207495.529000
+Z10 !s90 -reportprogress|300|-93|-work|work|C:/Users/lucas/reconfigurable-logic/cronometro/bcd_display.vhd|
+Z11 !s107 C:/Users/lucas/reconfigurable-logic/cronometro/bcd_display.vhd|
+Z12 o-93 -work work -O0
+Z13 tExplicit 1
+!s100 1eidiKjQ]0ofO2UCMWL3S2
+!i10b 1
+Abcd_display_arch
+R2
+R3
+R4
+DEx4 work 11 bcd_display 0 22 _=Kb]HLM?Sj_j^j>JQ6QN2
+l13
+L12
+V>@fZlLh;]LSW^AaH=KVmd3
+R8
+31
+R9
+R10
+R11
+R12
+R13
+!s100 LFVR7_i]G;iam1TN:<eNX0
+!i10b 1
+Econt4_mod10
+Z14 w1757564901
+R2
+R3
+R4
+R5
+Z15 8C:/Users/lucas/reconfigurable-logic/cronometro/cont4_mod10.vhd
+Z16 FC:/Users/lucas/reconfigurable-logic/cronometro/cont4_mod10.vhd
+l0
+L5
+V5aUbRJX=:QAzJm;=RGbeZ1
+R8
+31
+Z17 !s108 1758207495.462000
+Z18 !s90 -reportprogress|300|-93|-work|work|C:/Users/lucas/reconfigurable-logic/cronometro/cont4_mod10.vhd|
+Z19 !s107 C:/Users/lucas/reconfigurable-logic/cronometro/cont4_mod10.vhd|
+R12
+R13
+!s100 AEQDb=H[izl4J6L1dVmUM1
+!i10b 1
+Ax
+R2
+R3
+R4
+Z20 DEx4 work 11 cont4_mod10 0 22 5aUbRJX=:QAzJm;=RGbeZ1
+l17
+L15
+VRR_;T>2L2IBEcRM`bengW2
+R8
+31
+R17
+R18
+R19
+R12
+R13
+!s100 i_4ndbcPKUOOGMl;feUOd0
+!i10b 1
+Elab3
+Z21 w1758203800
+R2
+R3
+R4
+R5
+Z22 8C:/Users/lucas/reconfigurable-logic/cronometro/Lab3.vhd
+Z23 FC:/Users/lucas/reconfigurable-logic/cronometro/Lab3.vhd
+l0
+L5
+VfQXZg>`Nz[OLnATc?<fh22
+R8
+31
+Z24 !s108 1758207495.604000
+Z25 !s90 -reportprogress|300|-93|-work|work|C:/Users/lucas/reconfigurable-logic/cronometro/Lab3.vhd|
+Z26 !s107 C:/Users/lucas/reconfigurable-logic/cronometro/Lab3.vhd|
+R12
+R13
+!s100 i8c<3@:M9oEYMXgUlX=E23
+!i10b 1
+Ax
+R20
+R2
+R3
+R4
+DEx4 work 4 lab3 0 22 fQXZg>`Nz[OLnATc?<fh22
+l45
+L18
+VeAIe>oMihSR5B:6SeO1OB0
+R8
+31
+R24
+R25
+R26
+R12
+R13
+!s100 ^:VgjgoJcg:4VX97<MK[H0
+!i10b 1
+Elab3_tb
+Z27 w1758202708
+R2
+R3
+R4
+R5
+Z28 8C:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd
+Z29 FC:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd
+l0
+L5
+Vf<Ak7J5:EamciS1T8a[d83
+!s100 AZ?@mFoGMV`VcU1RkMnAC0
+R8
+31
+!i10b 1
+Z30 !s108 1758207495.677000
+Z31 !s90 -reportprogress|300|-93|-work|work|C:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd|
+Z32 !s107 C:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd|
+R12
+R13
+Asim
+R2
+R3
+R4
+DEx4 work 7 lab3_tb 0 22 f<Ak7J5:EamciS1T8a[d83
+l34
+L8
+VW_:FjP`znihD0Ah[b:PfA0
+!s100 WWhbKF=jCQ3X_LEJefE]c3
+R8
+31
+!i10b 1
+R30
+R31
+R32
+R12
+R13

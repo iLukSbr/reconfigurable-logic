@@ -1,0 +1,168 @@
+|cont_57
+clk_50m => div_clk:clk_div_1s.clk_in
+rst => reset_or_clear.IN0
+clr => reset_or_clear.IN1
+en => cont_up_mod16:units_counter.en
+ld => load_units.IN1
+ld => load_ten.IN1
+disp_ten[0] <= bcd_display:ten_display.seg[0]
+disp_ten[1] <= bcd_display:ten_display.seg[1]
+disp_ten[2] <= bcd_display:ten_display.seg[2]
+disp_ten[3] <= bcd_display:ten_display.seg[3]
+disp_ten[4] <= bcd_display:ten_display.seg[4]
+disp_ten[5] <= bcd_display:ten_display.seg[5]
+disp_ten[6] <= bcd_display:ten_display.seg[6]
+disp_un[0] <= bcd_display:units_display.seg[0]
+disp_un[1] <= bcd_display:units_display.seg[1]
+disp_un[2] <= bcd_display:units_display.seg[2]
+disp_un[3] <= bcd_display:units_display.seg[3]
+disp_un[4] <= bcd_display:units_display.seg[4]
+disp_un[5] <= bcd_display:units_display.seg[5]
+disp_un[6] <= bcd_display:units_display.seg[6]
+clk_divided_out <= div_clk:clk_div_1s.clk_out
+carry_units_out <= cont_up_mod16:units_counter.co
+load_ten_out <= load_ten.DB_MAX_OUTPUT_PORT_TYPE
+load_units_out <= load_units.DB_MAX_OUTPUT_PORT_TYPE
+tens_out[0] <= cont_up_mod16:ten_counter.q[0]
+tens_out[1] <= cont_up_mod16:ten_counter.q[1]
+tens_out[2] <= cont_up_mod16:ten_counter.q[2]
+tens_out[3] <= cont_up_mod16:ten_counter.q[3]
+uns_out[0] <= cont_up_mod16:units_counter.q[0]
+uns_out[1] <= cont_up_mod16:units_counter.q[1]
+uns_out[2] <= cont_up_mod16:units_counter.q[2]
+uns_out[3] <= cont_up_mod16:units_counter.q[3]
+
+
+|cont_57|div_clk:clk_div_1s
+clk_in => temp.CLK
+clk_in => \P_div:count[0].CLK
+clk_in => \P_div:count[1].CLK
+clk_out <= temp.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|cont_57|cont_up_mod16:units_counter
+clk => count_sig[0].CLK
+clk => count_sig[1].CLK
+clk => count_sig[2].CLK
+clk => count_sig[3].CLK
+en => count_sig.OUTPUTSELECT
+en => count_sig.OUTPUTSELECT
+en => count_sig.OUTPUTSELECT
+en => count_sig.OUTPUTSELECT
+en => co.IN1
+load => count_sig.OUTPUTSELECT
+load => count_sig.OUTPUTSELECT
+load => count_sig.OUTPUTSELECT
+load => count_sig.OUTPUTSELECT
+data_in[0] => count_sig.DATAB
+data_in[1] => count_sig.DATAB
+data_in[2] => count_sig.DATAB
+data_in[3] => count_sig.DATAB
+q[0] <= count_sig[0].DB_MAX_OUTPUT_PORT_TYPE
+q[1] <= count_sig[1].DB_MAX_OUTPUT_PORT_TYPE
+q[2] <= count_sig[2].DB_MAX_OUTPUT_PORT_TYPE
+q[3] <= count_sig[3].DB_MAX_OUTPUT_PORT_TYPE
+co <= co.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|cont_57|cont_up_mod16:ten_counter
+clk => count_sig[0].CLK
+clk => count_sig[1].CLK
+clk => count_sig[2].CLK
+clk => count_sig[3].CLK
+en => count_sig.OUTPUTSELECT
+en => count_sig.OUTPUTSELECT
+en => count_sig.OUTPUTSELECT
+en => count_sig.OUTPUTSELECT
+en => co.IN1
+load => count_sig.OUTPUTSELECT
+load => count_sig.OUTPUTSELECT
+load => count_sig.OUTPUTSELECT
+load => count_sig.OUTPUTSELECT
+data_in[0] => count_sig.DATAB
+data_in[1] => count_sig.DATAB
+data_in[2] => count_sig.DATAB
+data_in[3] => count_sig.DATAB
+q[0] <= count_sig[0].DB_MAX_OUTPUT_PORT_TYPE
+q[1] <= count_sig[1].DB_MAX_OUTPUT_PORT_TYPE
+q[2] <= count_sig[2].DB_MAX_OUTPUT_PORT_TYPE
+q[3] <= count_sig[3].DB_MAX_OUTPUT_PORT_TYPE
+co <= co.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|cont_57|bcd_display:ten_display
+bcd[0] => Mux0.IN19
+bcd[0] => Mux1.IN19
+bcd[0] => Mux2.IN19
+bcd[0] => Mux3.IN19
+bcd[0] => Mux4.IN19
+bcd[0] => Mux5.IN19
+bcd[0] => Mux6.IN19
+bcd[1] => Mux0.IN18
+bcd[1] => Mux1.IN18
+bcd[1] => Mux2.IN18
+bcd[1] => Mux3.IN18
+bcd[1] => Mux4.IN18
+bcd[1] => Mux5.IN18
+bcd[1] => Mux6.IN18
+bcd[2] => Mux0.IN17
+bcd[2] => Mux1.IN17
+bcd[2] => Mux2.IN17
+bcd[2] => Mux3.IN17
+bcd[2] => Mux4.IN17
+bcd[2] => Mux5.IN17
+bcd[2] => Mux6.IN17
+bcd[3] => Mux0.IN16
+bcd[3] => Mux1.IN16
+bcd[3] => Mux2.IN16
+bcd[3] => Mux3.IN16
+bcd[3] => Mux4.IN16
+bcd[3] => Mux5.IN16
+bcd[3] => Mux6.IN16
+seg[0] <= Mux6.DB_MAX_OUTPUT_PORT_TYPE
+seg[1] <= Mux5.DB_MAX_OUTPUT_PORT_TYPE
+seg[2] <= Mux4.DB_MAX_OUTPUT_PORT_TYPE
+seg[3] <= Mux3.DB_MAX_OUTPUT_PORT_TYPE
+seg[4] <= Mux2.DB_MAX_OUTPUT_PORT_TYPE
+seg[5] <= Mux1.DB_MAX_OUTPUT_PORT_TYPE
+seg[6] <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|cont_57|bcd_display:units_display
+bcd[0] => Mux0.IN19
+bcd[0] => Mux1.IN19
+bcd[0] => Mux2.IN19
+bcd[0] => Mux3.IN19
+bcd[0] => Mux4.IN19
+bcd[0] => Mux5.IN19
+bcd[0] => Mux6.IN19
+bcd[1] => Mux0.IN18
+bcd[1] => Mux1.IN18
+bcd[1] => Mux2.IN18
+bcd[1] => Mux3.IN18
+bcd[1] => Mux4.IN18
+bcd[1] => Mux5.IN18
+bcd[1] => Mux6.IN18
+bcd[2] => Mux0.IN17
+bcd[2] => Mux1.IN17
+bcd[2] => Mux2.IN17
+bcd[2] => Mux3.IN17
+bcd[2] => Mux4.IN17
+bcd[2] => Mux5.IN17
+bcd[2] => Mux6.IN17
+bcd[3] => Mux0.IN16
+bcd[3] => Mux1.IN16
+bcd[3] => Mux2.IN16
+bcd[3] => Mux3.IN16
+bcd[3] => Mux4.IN16
+bcd[3] => Mux5.IN16
+bcd[3] => Mux6.IN16
+seg[0] <= Mux6.DB_MAX_OUTPUT_PORT_TYPE
+seg[1] <= Mux5.DB_MAX_OUTPUT_PORT_TYPE
+seg[2] <= Mux4.DB_MAX_OUTPUT_PORT_TYPE
+seg[3] <= Mux3.DB_MAX_OUTPUT_PORT_TYPE
+seg[4] <= Mux2.DB_MAX_OUTPUT_PORT_TYPE
+seg[5] <= Mux1.DB_MAX_OUTPUT_PORT_TYPE
+seg[6] <= Mux0.DB_MAX_OUTPUT_PORT_TYPE
+
+

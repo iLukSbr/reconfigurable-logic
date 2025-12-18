@@ -9,6 +9,7 @@
 Alunos: Lucas Yukio Fukuda Matsumoto e Letícia Walger Amaro
 
 A pasta prints contém imagens e vídeos do funcionamento do projeto.
+Vídeo do funcionamento da placa controlando o semáforo nos displays 7 segmentos e na página web: https://youtu.be/9gWcVJNrkoY
 
 ## Protocolo de comunicação do semáforo
 - O cliente tem uma visualização (animação) de simulação de tráfego na página web. Ideia: https://github.com/djalilhebal/softvis-traffic-semaphores
@@ -41,10 +42,12 @@ e na luz vermelha, eles param.
 
 ## Displays 7 segmentos
 - Barras horizontais indicam cada luz do semáforo (vermelho - superior, amarelo - do meio, verde - inferior).
-- HEX7 = semáforo ID 0
-- HEX6 = semáforo ID 1
-- HEX(5, 4, 3) = contador do semáforo ID 0 (centena, dezena e unidade dos segundos restantes)
-- HEX(2, 1, 0) = contador do semáforo ID 1 (centena, dezena e unidade dos segundos restantes)
+- HEX7 = semáforo ID 0.
+- HEX6 = semáforo ID 1.
+- HEX(5, 4, 3) = contador do semáforo ID 0 (centena, dezena e unidade dos segundos restantes).
+- HEX(2, 1, 0) = contador do semáforo ID 1 (centena, dezena e unidade dos segundos restantes).
+- 3 displays da esquerda são a contagem regressiva do semáforo 0.
+- 3 displays da direita são a contagem regressiva do semáforo 1.
 
 ## Arquitetura de Registradores
 

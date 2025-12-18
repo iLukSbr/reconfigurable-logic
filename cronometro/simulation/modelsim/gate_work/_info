@@ -1,0 +1,85 @@
+m255
+K3
+13
+cModel Technology
+Z0 dC:\Users\lucas\reconfigurable-logic\cronometro\simulation\modelsim
+Elab3
+Z1 w1758204019
+Z2 DPx4 ieee 16 vital_primitives 0 22 9W@YP9_VCb?_GCJ8e:;YQ0
+Z3 DPx9 cycloneii 19 cycloneii_atom_pack 0 22 zUjlM<IUJVWSWg:L2<>ic3
+Z4 DPx4 ieee 12 vital_timing 0 22 7h8zz2S4HVg:a;2TBMI[j1
+Z5 DPx3 std 6 textio 0 22 5>J:;AW>W0[[dW0I6EN1Q0
+Z6 DPx4 ieee 14 std_logic_1164 0 22 5=aWaoGZSMWIcH0i^f`XF1
+Z7 DPx9 cycloneii 20 cycloneii_components 0 22 h@gSJ;Al32oYg[7^PbnAR0
+Z8 dC:\Users\lucas\reconfigurable-logic\cronometro\simulation\modelsim
+Z9 8Lab3.vho
+Z10 FLab3.vho
+l0
+L34
+VF47EIXMPN221GLzMRFOc70
+Z11 OV;C;10.1d;51
+31
+Z12 !s108 1758205528.083000
+Z13 !s90 -reportprogress|300|-93|-work|work|Lab3.vho|
+Z14 !s107 Lab3.vho|
+Z15 o-93 -work work -O0
+Z16 tExplicit 1
+!s100 O^Y?Hfhfbddz:A;_jmD0P2
+!i10b 1
+Astructure
+R2
+R3
+R4
+R5
+R6
+R7
+DEx4 work 4 lab3 0 22 F47EIXMPN221GLzMRFOc70
+l363
+L80
+V4276S[k21o8Dk7AfRD0^Q0
+R11
+31
+R12
+R13
+R14
+R15
+R16
+!s100 XTd26ENbHnJhE>BGmzSYE2
+!i10b 1
+Elab3_tb
+Z17 w1758202708
+Z18 DPx4 ieee 11 numeric_std 0 22 O3PF8EB`?j9=z7KT`fn941
+R5
+R6
+R8
+Z19 8C:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd
+Z20 FC:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd
+l0
+L5
+Vf<Ak7J5:EamciS1T8a[d83
+!s100 AZ?@mFoGMV`VcU1RkMnAC0
+R11
+31
+!i10b 1
+Z21 !s108 1758205528.186000
+Z22 !s90 -reportprogress|300|-93|-work|work|C:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd|
+Z23 !s107 C:/Users/lucas/reconfigurable-logic/cronometro/Lab3_TB.vhd|
+R15
+R16
+Asim
+R18
+R5
+R6
+DEx4 work 7 lab3_tb 0 22 f<Ak7J5:EamciS1T8a[d83
+l34
+L8
+VW_:FjP`znihD0Ah[b:PfA0
+!s100 WWhbKF=jCQ3X_LEJefE]c3
+R11
+31
+!i10b 1
+R21
+R22
+R23
+R15
+R16
