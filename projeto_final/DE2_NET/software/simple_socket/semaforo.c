@@ -13,10 +13,9 @@
 
 // Project
 #include "seg7display.h"
-#include "semaforo_hw.h"
+#include "user_hw.h"
 
-/* Mailbox declared in simple_socket_server.c; used to trigger immediate status send */
-extern OS_EVENT *SemaphoreStatusMbox;
+extern OS_EVENT *SemaphoreStatusMbox; // Mailbox for semaphore status interrupt notifications.
 
 static semaphore_t semaphores[2] = {
     {
@@ -313,10 +312,10 @@ uint32_t decimal_to_hex_representation(uint32_t number) {
     uint32_t hex_value = 0;
     uint32_t shift = 0;
     while (number > 0) {
-        uint32_t digit = number % 10;   // Pega último dígito decimal.
-        hex_value |= (digit << shift);  // Coloca no nibble correspondente.
+        uint32_t digit = number % 10;   // Takes last decimal digit.
+        hex_value |= (digit << shift);  // Puts it in the correct nibble.
         number /= 10;
-        shift += 4;                     // Próximo nibble.
+        shift += 4;                     // Next nibble.
     }
     return hex_value;
 }
@@ -351,11 +350,11 @@ void set_semaphore_times(const uint8_t semaphore_index, uint16_t red_time, uint1
     semaphores[semaphore_index].config[2].state = GREEN;
     semaphores[semaphore_index].config[2].duration = green_time;
     
-#ifdef SEMAPHORE_HW_ENABLED
+#ifdef USER_HW_ENABLED
     /* Write to hardware registers */
-    semaphore_hw_write_red_time(semaphore_index, red_time);
-    semaphore_hw_write_yellow_time(semaphore_index, yellow_time);
-    semaphore_hw_write_green_time(semaphore_index, green_time);
+    user_hw_write_red_time(semaphore_index, red_time);
+    user_hw_write_yellow_time(semaphore_index, yellow_time);
+    user_hw_write_green_time(semaphore_index, green_time);
     printf("Semaphore %d times written to HW: R=%d, Y=%d, G=%d\n", 
            semaphore_index, red_time, yellow_time, green_time);
 #else
@@ -508,7 +507,7 @@ void start_semaphore(const uint8_t semaphore_index, const semaphore_state_t init
            semaphore_state_to_string(semaphores[other].current_state),
            semaphores[other].remaining_time);
     
-#ifdef SEMAPHORE_HW_ENABLED
+#ifdef USER_HW_ENABLED
     /* Send START command to hardware */
     uint8_t hw_state = SEMAPHORE_INITIAL_STATE_IDLE;
     switch (initial_state) {
@@ -517,7 +516,7 @@ void start_semaphore(const uint8_t semaphore_index, const semaphore_state_t init
         case GREEN:  hw_state = SEMAPHORE_INITIAL_STATE_GREEN; break;
         default:     hw_state = SEMAPHORE_INITIAL_STATE_IDLE; break;
     }
-    semaphore_hw_write_control(semaphore_index, 1, 0, hw_state);
+    user_hw_write_control(semaphore_index, 1, 0, hw_state);
     printf("Semaphore %d HW control updated\n", semaphore_index);
 #endif
     
@@ -535,9 +534,9 @@ void stop_semaphore(const uint8_t semaphore_index) {
         return;
     }
     
-#ifdef SEMAPHORE_HW_ENABLED
+#ifdef USER_HW_ENABLED
     /* Send STOP command to hardware */
-    semaphore_hw_write_control(semaphore_index, 0, 1, SEMAPHORE_INITIAL_STATE_IDLE);
+    user_hw_write_control(semaphore_index, 0, 1, SEMAPHORE_INITIAL_STATE_IDLE);
     /* Keep software state consistent and enter idle blinking */
     semaphores[semaphore_index].running = 0;
     semaphores[semaphore_index].idle_blink_on = 0;  /* start with OFF, next tick goes YELLOW */

@@ -49,7 +49,7 @@ int shutdown(int sockfd, int how);
 #include "basic_io.h"
 
 #include "semaforo.h"
-#include "semaforo_hw.h"
+#include "user_hw.h"
 
 #define IPPROTO_TCP 6
 
@@ -229,7 +229,7 @@ void SSSCreateTasks(void)
    printf("semaphore_status_task created.\n");
 
 #if 0  /* DISABLED: IRQs causing system freeze - using polling only */
-#ifdef SEMAPHORE_HW_ENABLED
+#ifdef USER_HW_ENABLED
    /* Register interrupt handlers if hardware is enabled */
    register_semaphore_interrupts();
 #endif
@@ -397,7 +397,7 @@ void send_semaphore_status(void)
  * Hardware interrupt handler called when semaphore changes state.
  * Posts a notification to the mailbox to trigger status update.
  */
-#ifdef SEMAPHORE_HW_ENABLED
+#ifdef USER_HW_ENABLED
 void semaphore_interrupt_handler(void* context)
 {
     static INT32U notification = 1;
@@ -405,8 +405,8 @@ void semaphore_interrupt_handler(void* context)
     INT32U current_tick;
 
     /* Clear interrupt source FIRST to prevent re-trigger */
-    semaphore_hw_clear_irq(0);
-    semaphore_hw_clear_irq(1);
+    user_hw_clear_irq(0);
+    user_hw_clear_irq(1);
 
     /* Debounce: ignore if IRQ came too quickly (< 200ms) */
     current_tick = OSTimeGet();
@@ -437,7 +437,7 @@ void register_semaphore_interrupts(void)
         if (result == 0) {
             printf("[IRQ] Registered interrupt for Semaphore 0 (IRQ %d)\n", SEMAPHORE_0_IRQ);
             /* Enable hardware IRQ for semaphore 0 */
-            // semaphore_hw_enable_irq(0);  /* DISABLED - causing freeze */
+            // user_hw_enable_irq(0);  /* DISABLED - causing freeze */
         } else {
             printf("[IRQ] Failed to register interrupt for Semaphore 0\n");
         }
@@ -454,13 +454,13 @@ void register_semaphore_interrupts(void)
         if (result == 0) {
             printf("[IRQ] Registered interrupt for Semaphore 1 (IRQ %d)\n", SEMAPHORE_1_IRQ);
             /* Enable hardware IRQ for semaphore 1 */
-            // semaphore_hw_enable_irq(1);  /* DISABLED - causing freeze */
+            // user_hw_enable_irq(1);  /* DISABLED - causing freeze */
         } else {
             printf("[IRQ] Failed to register interrupt for Semaphore 1\n");
         }
     #endif
 }
-#endif /* SEMAPHORE_HW_ENABLED */
+#endif /* USER_HW_ENABLED */
 
 /*
  * SemaphoreStatusTask()

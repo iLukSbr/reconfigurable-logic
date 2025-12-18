@@ -84,19 +84,11 @@
          type = "long";
       }
    }
-   element DM9000A.avalon_slave_0
+   element SEG7_Display.avalon_slave_0
    {
       datum baseAddress
       {
-         value = "27795712";
-         type = "long";
-      }
-   }
-   element Audio_0.avalon_slave_0
-   {
-      datum baseAddress
-      {
-         value = "27795728";
+         value = "27795732";
          type = "long";
       }
    }
@@ -116,11 +108,19 @@
          type = "long";
       }
    }
-   element SEG7_Display.avalon_slave_0
+   element Audio_0.avalon_slave_0
    {
       datum baseAddress
       {
-         value = "27795732";
+         value = "27795728";
+         type = "long";
+      }
+   }
+   element DM9000A.avalon_slave_0
+   {
+      datum baseAddress
+      {
+         value = "27795712";
          type = "long";
       }
    }
@@ -260,6 +260,14 @@
          type = "int";
       }
    }
+   element switch_pio.s1
+   {
+      datum baseAddress
+      {
+         value = "27795616";
+         type = "long";
+      }
+   }
    element SD_CMD.s1
    {
       datum baseAddress
@@ -268,27 +276,11 @@
          type = "long";
       }
    }
-   element timer_1.s1
+   element led_green.s1
    {
       datum baseAddress
       {
-         value = "27795520";
-         type = "long";
-      }
-   }
-   element sdram_0.s1
-   {
-      datum baseAddress
-      {
-         value = "8388608";
-         type = "long";
-      }
-   }
-   element uart_0.s1
-   {
-      datum baseAddress
-      {
-         value = "27795456";
+         value = "27795584";
          type = "long";
       }
    }
@@ -300,19 +292,11 @@
          type = "long";
       }
    }
-   element SD_CLK.s1
+   element led_red.s1
    {
       datum baseAddress
       {
-         value = "27795664";
-         type = "long";
-      }
-   }
-   element SD_DAT.s1
-   {
-      datum baseAddress
-      {
-         value = "27795632";
+         value = "27795568";
          type = "long";
       }
    }
@@ -324,27 +308,43 @@
          type = "long";
       }
    }
-   element switch_pio.s1
+   element sdram_0.s1
    {
       datum baseAddress
       {
-         value = "27795616";
+         value = "8388608";
          type = "long";
       }
    }
-   element led_red.s1
+   element SD_CLK.s1
    {
       datum baseAddress
       {
-         value = "27795568";
+         value = "27795664";
          type = "long";
       }
    }
-   element led_green.s1
+   element timer_1.s1
    {
       datum baseAddress
       {
-         value = "27795584";
+         value = "27795520";
+         type = "long";
+      }
+   }
+   element uart_0.s1
+   {
+      datum baseAddress
+      {
+         value = "27795456";
+         type = "long";
+      }
+   }
+   element SD_DAT.s1
+   {
+      datum baseAddress
+      {
+         value = "27795632";
          type = "long";
       }
    }
@@ -428,6 +428,14 @@
          type = "long";
       }
    }
+   element user_hw_0
+   {
+      datum _sortIndex
+      {
+         value = "27";
+         type = "int";
+      }
+   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
@@ -443,7 +451,7 @@
  <parameter name="projectName" value="DE2_NET.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1764773183236" />
+ <parameter name="timeStamp" value="1766027309902" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="clk_50_clk_in" internal="clk_50.clk_in" type="clock" dir="end">
@@ -512,20 +520,7 @@
    dir="end">
   <port name="in_port_to_the_button_pio" internal="in_port" />
  </interface>
- <interface
-   name="ISP1362_conduit_end"
-   internal="ISP1362.conduit_end"
-   type="conduit"
-   dir="end">
-  <port name="USB_DATA_to_and_from_the_ISP1362" internal="USB_DATA" />
-  <port name="USB_ADDR_from_the_ISP1362" internal="USB_ADDR" />
-  <port name="USB_RD_N_from_the_ISP1362" internal="USB_RD_N" />
-  <port name="USB_WR_N_from_the_ISP1362" internal="USB_WR_N" />
-  <port name="USB_CS_N_from_the_ISP1362" internal="USB_CS_N" />
-  <port name="USB_RST_N_from_the_ISP1362" internal="USB_RST_N" />
-  <port name="USB_INT0_to_the_ISP1362" internal="USB_INT0" />
-  <port name="USB_INT1_to_the_ISP1362" internal="USB_INT1" />
- </interface>
+ <interface name="ISP1362_conduit_end" internal="ISP1362.conduit_end" />
  <interface
    name="SD_CLK_external_connection"
    internal="SD_CLK.external_connection"
@@ -565,31 +560,13 @@
   <port name="rxd_to_the_uart_0" internal="rxd" />
   <port name="txd_from_the_uart_0" internal="txd" />
  </interface>
- <interface
-   name="audio_0"
-   internal="Audio_0.avalon_slave_0_export"
-   type="conduit"
-   dir="end" />
- <interface
-   name="vga_0"
-   internal="VGA_0.avalon_slave_0_export"
-   type="conduit"
-   dir="end" />
- <interface
-   name="dm9000a"
-   internal="DM9000A.avalon_slave_0_export"
-   type="conduit"
-   dir="end" />
- <interface
-   name="seg7_display"
-   internal="SEG7_Display.avalon_slave_0_export"
-   type="conduit"
-   dir="end" />
+ <interface name="audio_0" internal="Audio_0.avalon_slave_0_export" />
+ <interface name="vga_0" internal="VGA_0.avalon_slave_0_export" />
+ <interface name="dm9000a" internal="DM9000A.avalon_slave_0_export" />
+ <interface name="seg7_display" internal="SEG7_Display.avalon_slave_0_export" />
  <interface
    name="sram_0_avalon_slave_0_export"
-   internal="sram_0.avalon_slave_0_export"
-   type="conduit"
-   dir="end" />
+   internal="sram_0.avalon_slave_0_export" />
  <module kind="clock_source" version="13.0" enabled="1" name="clk_50">
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="clockFrequencyKnown" value="true" />
@@ -835,7 +812,7 @@
   <parameter name="width" value="1" />
   <parameter name="clockRate" value="50000000" />
  </module>
- <module kind="ISP1362_IF" version="1.0" enabled="1" name="ISP1362">
+ <module name="ISP1362" kind="ISP1362_IF" version="1.0" enabled="1">
   <parameter name="AUTO_HC_CLOCK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DC_CLOCK_CLOCK_RATE" value="50000000" />
  </module>
@@ -941,7 +918,7 @@
   <parameter name="tightlyCoupledInstructionMaster2AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster3AddrWidth" value="1" />
   <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='cfi_flash_0.uas' start='0x1400000' end='0x1800000' /><slave name='cpu_0.jtag_debug_module' start='0x1A81000' end='0x1A81800' /><slave name='epcs_controller.epcs_control_port' start='0x1A81800' end='0x1A82000' /><slave name='sysid_qsys_0.control_slave' start='0x1A82108' end='0x1A82110' /></address-map>]]></parameter>
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='cfi_flash_0.uas' start='0x1400000' end='0x1800000' /><slave name='VGA_0.avalon_slave_0' start='0x1800000' end='0x1A00000' /><slave name='sram_0.avalon_slave_0' start='0x1A00000' end='0x1A80000' /><slave name='cpu_0.jtag_debug_module' start='0x1A81000' end='0x1A81800' /><slave name='epcs_controller.epcs_control_port' start='0x1A81800' end='0x1A82000' /><slave name='uart_0.s1' start='0x1A82000' end='0x1A82020' /><slave name='timer_0.s1' start='0x1A82020' end='0x1A82040' /><slave name='timer_1.s1' start='0x1A82040' end='0x1A82060' /><slave name='lcd_16207_0.control_slave' start='0x1A82060' end='0x1A82070' /><slave name='led_red.s1' start='0x1A82070' end='0x1A82080' /><slave name='led_green.s1' start='0x1A82080' end='0x1A82090' /><slave name='button_pio.s1' start='0x1A82090' end='0x1A820A0' /><slave name='switch_pio.s1' start='0x1A820A0' end='0x1A820B0' /><slave name='SD_DAT.s1' start='0x1A820B0' end='0x1A820C0' /><slave name='SD_CMD.s1' start='0x1A820C0' end='0x1A820D0' /><slave name='SD_CLK.s1' start='0x1A820D0' end='0x1A820E0' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x1A820E0' end='0x1A820E8' /><slave name='ISP1362.hc' start='0x1A820E8' end='0x1A820F0' /><slave name='ISP1362.dc' start='0x1A820F0' end='0x1A820F8' /><slave name='DM9000A.avalon_slave_0' start='0x1A82100' end='0x1A82108' /><slave name='sysid_qsys_0.control_slave' start='0x1A82108' end='0x1A82110' /><slave name='Audio_0.avalon_slave_0' start='0x1A82110' end='0x1A82114' /><slave name='SEG7_Display.avalon_slave_0' start='0x1A82114' end='0x1A82118' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='cfi_flash_0.uas' start='0x1400000' end='0x1800000' /><slave name='cpu_0.jtag_debug_module' start='0x1A81000' end='0x1A81800' /><slave name='epcs_controller.epcs_control_port' start='0x1A81800' end='0x1A82000' /><slave name='uart_0.s1' start='0x1A82000' end='0x1A82020' /><slave name='timer_0.s1' start='0x1A82020' end='0x1A82040' /><slave name='timer_1.s1' start='0x1A82040' end='0x1A82060' /><slave name='lcd_16207_0.control_slave' start='0x1A82060' end='0x1A82070' /><slave name='led_red.s1' start='0x1A82070' end='0x1A82080' /><slave name='led_green.s1' start='0x1A82080' end='0x1A82090' /><slave name='button_pio.s1' start='0x1A82090' end='0x1A820A0' /><slave name='switch_pio.s1' start='0x1A820A0' end='0x1A820B0' /><slave name='SD_DAT.s1' start='0x1A820B0' end='0x1A820C0' /><slave name='SD_CMD.s1' start='0x1A820C0' end='0x1A820D0' /><slave name='SD_CLK.s1' start='0x1A820D0' end='0x1A820E0' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x1A820E0' end='0x1A820E8' /><slave name='sysid_qsys_0.control_slave' start='0x1A82108' end='0x1A82110' /></address-map>]]></parameter>
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="deviceFamilyName" value="Cyclone II" />
   <parameter name="internalIrqMaskSystemInfo" value="511" />
@@ -1059,26 +1036,27 @@
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
  </module>
- <module kind="audio_dac_fifo" version="1.0.1" enabled="1" name="Audio_0">
+ <module name="Audio_0" kind="audio_dac_fifo" version="1.0.1" enabled="1">
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
+  <parameter name="CHANNEL_NUM" value="2" />
+  <parameter name="DATA_WIDTH" value="16" />
   <parameter name="REF_CLK" value="18432000" />
   <parameter name="SAMPLE_RATE" value="48000" />
-  <parameter name="DATA_WIDTH" value="16" />
-  <parameter name="CHANNEL_NUM" value="2" />
-  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
  </module>
- <module kind="binary_vga_controller" version="1.0.1" enabled="1" name="VGA_0">
+ <module name="VGA_0" kind="binary_vga_controller" version="1.0.1" enabled="1">
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="RAM_SIZE" value="307200" />
+ </module>
+ <module name="DM9000A" kind="dm9000a" version="1.0.1" enabled="1">
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
  </module>
- <module kind="dm9000a" version="1.0.1" enabled="1" name="DM9000A">
+ <module name="SEG7_Display" kind="seg7_lut_8" version="1.0.1" enabled="1">
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
  </module>
- <module kind="seg7_lut_8" version="1.0.1" enabled="1" name="SEG7_Display">
+ <module name="sram_0" kind="sram_16bit_512k" version="1.0.1" enabled="1">
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
  </module>
- <module kind="sram_16bit_512k" version="1.0.1" enabled="1" name="sram_0">
-  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
- </module>
+ <module kind="user_hw" version="1.0" enabled="1" name="user_hw_0" />
  <connection kind="clock" version="13.0" start="clk_50.clk" end="sdram_0.clk" />
  <connection
    kind="avalon"
