@@ -1,16 +1,7 @@
-----------------------------------------------------
--- VHDL code for n-bit counter (ESD figure 2.6)
--- by Weijun Zhang, 04/2001
---
--- this is the behavior description of n-bit counter
--- another way can be used is FSM model. 
-----------------------------------------------------
-	
+
 library ieee ;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
-
-----------------------------------------------------
 
 entity counter is
 
@@ -23,8 +14,6 @@ port(
 );
 end counter;
 
-----------------------------------------------------
-
 architecture behv of counter is		 	  
 	
    -- signal Pre_Q: std_logic_vector(n-1 downto 0);
@@ -32,9 +21,6 @@ architecture behv of counter is
 
 
 begin
-
-    -- behavior describe the counter
-
     process(clk, en, rst)
     begin
 	if rst = '1' then
@@ -46,9 +32,5 @@ begin
 	end if;
     end process;	
 	
-    -- concurrent assignment statement
     o <= Pre_Q;
-
 end behv;
-
------------------------------------------------------

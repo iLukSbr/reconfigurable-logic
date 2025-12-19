@@ -168,12 +168,10 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 			Created "sss tx task" task (Prio: 9)
 			[sss_rx_task] RX Task listening on port 80
 			[sss_tx_task] TX Task started
-		16.1.7 Se deu certo, precisa testar com um server agora. Primeiro pare o programa do Eclipse.
 		16.1.8 Pegue o tcpserver.py (fazendo alterações de ip e porta do NIOS dentro, coloque o IP que definiu no IPADDR do simple_socket_server.h) fornecido 
 		  e rode ele fazendo o comando python .\tcpserver.py na linha de comando no local que estiver o arquivo
-		16.1.9 Rode novamente com Run As->Nios II Hardware
 		16.1.10 Se o roteador não bloqueou nada, esta pronto!
-		Basta abrir o site no navegador, por exemplo http://localhost:8080 e digitar a string, então clicar em Processar String
+		Basta abrir o site no navegador, por exemplo http://localhost:8080
 			No terminal que rodou tcpserver.py deve aparecer:
 				PC HTTP Server for NIOS String Processor
 				Server running on port 8080
@@ -193,8 +191,6 @@ Abra o Programmer, aperte Auto Detect e aperte Start, caso o Progress esteja ver
 				[sss_exec_command] processed data: bcd
 				[sss_exec_command] sending response
 				[sss_exec_command] response sent
-			E no site aparecerá (pode apertar F12 para ver logs no console do navegador):
-				Processed String: "string que vc enviou"
 	16.2 Se os projetos simple_socket e simple_socket_bsp estão aparecendo e NÃO são expandíveis (pastinha cor azul):
 		16.2.1 Delete ambos com botão direito -> Delete (sem deletar do computador)
 		16.2.2 Botão direito no Project Explorer->Import...->Nios II Software Build Tools Project->
